@@ -156,7 +156,7 @@ class ProMatchups_Endpoints {
 		// Matchup.
 		add_meta_box(
 			'matchup_outcome_asknews_body', // ID of the meta box
-			__( 'AskNews Outcome (JSON)', 'mai-asknews' ), // Title of the meta box
+			__( 'AskNews Outcome (JSON)', 'promatchups' ), // Title of the meta box
 			[ $this, 'display_matchup_outcome_metabox' ], // Callback function to display the field
 			'matchup', // Post type to add the meta box
 			'normal', // Context where the box will be displayed
@@ -166,7 +166,7 @@ class ProMatchups_Endpoints {
 		// Matchup Latest Insight.
 		add_meta_box(
 			'matchup_insight_asknews_body', // ID of the meta box
-			__( 'AskNews Latest Insight (JSON)', 'mai-asknews' ), // Title of the meta box
+			__( 'AskNews Latest Insight (JSON)', 'promatchups' ), // Title of the meta box
 			[ $this, 'display_matchup_insight_metabox' ], // Callback function to display the field
 			'matchup', // Post type to add the meta box
 			'normal', // Context where the box will be displayed
@@ -176,7 +176,7 @@ class ProMatchups_Endpoints {
 		// Insight.
 		add_meta_box(
 			'insight_asknews_body', // ID of the meta box
-			__( 'AskNews Insight (JSON)', 'mai-asknews' ), // Title of the meta box
+			__( 'AskNews Insight (JSON)', 'promatchups' ), // Title of the meta box
 			[ $this, 'display_insight_metabox' ], // Callback function to display the field
 			'insight', // Post type to add the meta box
 			'normal', // Context where the box will be displayed
@@ -207,7 +207,7 @@ class ProMatchups_Endpoints {
 	 * @return void
 	 */
 	function display_matchup_insight_metabox( $post ) {
-		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'mai-asknews' ) );
+		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'promatchups' ) );
 		echo $this->get_metabox_content( pm_get_insight_id( $post->ID ), 'asknews_body' );
 		echo $this->get_toggle_script();
 	}
@@ -222,7 +222,7 @@ class ProMatchups_Endpoints {
 	 * @return void
 	 */
 	function display_insight_metabox( $post ) {
-		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'mai-asknews' ) );
+		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'promatchups' ) );
 		echo $this->get_metabox_content( $post->ID, 'asknews_body' );
 		echo $this->get_toggle_script();
 	}

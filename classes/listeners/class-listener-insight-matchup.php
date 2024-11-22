@@ -334,7 +334,7 @@ class ProMatchups_AskNews_Insight_Matchup_Listener extends ProMatchups_Listener 
 			if ( $insights ) {
 				foreach ( $insights as $index => $id ) {
 					// Build title with index.
-					$updated_title = sprintf( '%s (%s #%s)', $matchup_title, __( 'Update', 'mai-asknews' ), $index + 1 );
+					$updated_title = sprintf( '%s (%s #%s)', $matchup_title, __( 'Update', 'promatchups' ), $index + 1 );
 
 					// Update post title.
 					wp_update_post(

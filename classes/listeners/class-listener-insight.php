@@ -90,7 +90,7 @@ class ProMatchups_AskNews_Insight_Listener extends ProMatchups_Listener {
 			'post_type'    => 'insight',
 			'post_status'  => 'publish',
 			'post_author'  => $this->user->ID,
-			'post_title'   => __( 'Insight', 'mai-asknews' ) . ' ' . $forecast_uuid, // Updated later.
+			'post_title'   => __( 'Insight', 'promatchups' ) . ' ' . $forecast_uuid, // Updated later.
 			'post_name'    => $forecast_uuid,
 			'post_excerpt' => $summary,
 			'meta_input'   => [

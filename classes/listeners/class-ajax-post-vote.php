@@ -42,7 +42,7 @@ class ProMatchups_Ajax_Post_Vote {
 	function handle_submission() {
 		// Verify nonce for security.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'pm_vote_nonce' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Vote submission security check failed.', 'mai-asknews' ) ] );
+			wp_send_json_error( [ 'message' => __( 'Vote submission security check failed.', 'promatchups' ) ] );
 			exit;
 		}
 
@@ -69,19 +69,19 @@ class ProMatchups_Ajax_Post_Vote {
 
 		// Bail if no team.
 		if ( ! $team ) {
-			wp_send_json_error( [ 'message' => __( 'No team selected.', 'mai-asknews' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No team selected.', 'promatchups' ) ] );
 			exit;
 		}
 
 		// Bail if no user ID.
 		if ( ! $user_id ) {
-			wp_send_json_error( [ 'message' => __( 'No user ID found.', 'mai-asknews' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No user ID found.', 'promatchups' ) ] );
 			exit;
 		}
 
 		// Bail if no matchup ID.
 		if ( ! $matchup_id ) {
-			wp_send_json_error( [ 'message' => __( 'No matchup ID found.', 'mai-asknews' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No matchup ID found.', 'promatchups' ) ] );
 			exit;
 		}
 

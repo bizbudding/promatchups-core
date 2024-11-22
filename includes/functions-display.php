@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || die;
  * @return void
  */
 function pm_enqueue_styles() {
-	wp_enqueue_style( 'mai-asknews', pm_get_file_url( 'mai-asknews', 'css' ), [], pm_get_file_version( 'mai-asknews', 'css' ) );
+	wp_enqueue_style( 'promatchups', pm_get_file_url( 'promatchups', 'css' ), [], pm_get_file_version( 'promatchups', 'css' ) );
 }
 
 /**
@@ -25,8 +25,8 @@ function pm_enqueue_styles() {
  */
 function pm_enqueue_scripts( $selected ) {
 	// Enqueue JS.
-	wp_enqueue_script( 'mai-asknews-vote', pm_get_file_url( 'mai-asknews-vote', 'js' ), [], pm_get_file_version( 'mai-asknews-vote', 'js' ), true );
-	wp_localize_script( 'mai-asknews-vote', 'maiAskNewsVars', [
+	wp_enqueue_script( 'promatchups-vote', pm_get_file_url( 'promatchups-vote', 'js' ), [], pm_get_file_version( 'promatchups-vote', 'js' ), true );
+	wp_localize_script( 'promatchups-vote', 'maiAskNewsVars', [
 		'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
 		'selected' => $selected,
 	] );
@@ -65,7 +65,7 @@ function pm_get_updated_date() {
 		} elseif ( $interval_est->i > 0 ) {
 			$time_ago_est = $interval_est->i . ' minute' . ( $interval_est->i > 1 ? 's' : '' ) . ' ago';
 		} else {
-			$time_ago_est = __( 'Just now', 'mai-asknews' );
+			$time_ago_est = __( 'Just now', 'promatchups' );
 		}
 
 		if ( $interval_pst->days > 0 ) {
@@ -75,7 +75,7 @@ function pm_get_updated_date() {
 		} elseif ( $interval_pst->i > 0 ) {
 			$time_ago_pst = $interval_pst->i . ' minute' . ( $interval_pst->i > 1 ? 's' : '' ) . ' ago';
 		} else {
-			$time_ago_pst = __( 'Just now', 'mai-asknews' );
+			$time_ago_pst = __( 'Just now', 'promatchups' );
 		}
 
 		$updated = sprintf( '<span data-timezone="ET">%s</span><span data-timezonesep> | </span><span data-timezone="PT">%s</span>', $time_ago_est, $time_ago_pst );
@@ -89,7 +89,7 @@ function pm_get_updated_date() {
 	}
 
 	// Display the update.
-	return sprintf( '<p class="pm-update">%s %s</p>', __( 'Updated', 'mai-asknews' ), $updated );
+	return sprintf( '<p class="pm-update">%s %s</p>', __( 'Updated', 'promatchups' ), $updated );
 }
 
 
@@ -210,7 +210,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	// If prediction.
 	if ( $prediction_short ) {
 		$list['choice'] = [
-			'hidden'  => __( 'Members Only', 'mai-asknews' ),
+			'hidden'  => __( 'Members Only', 'promatchups' ),
 			'visible' => sprintf( "%s win", $prediction_short ),
 		];
 	}
@@ -223,12 +223,12 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 		if ( ! is_null( $spread ) ) {
 			if ( $spread_covered ) {
 				$list['spread'] = [
-					'hidden'  => __( 'Members Only', 'mai-asknews' ),
+					'hidden'  => __( 'Members Only', 'promatchups' ),
 					'visible' => sprintf( '%s cover %s', $prediction_short, $spread ),
 				];
 			} else {
 				$list['spread'] = [
-					'hidden'  => __( 'Members Only', 'mai-asknews' ),
+					'hidden'  => __( 'Members Only', 'promatchups' ),
 					'visible' => sprintf( '%s won\'t cover %s', $prediction_short, $spread ),
 				];
 			}
@@ -238,7 +238,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	// If probability and likelihood.
 	if ( $probability && $likelihood ) {
 		$list['probability'] = [
-			'hidden'  => __( 'Members Only', 'mai-asknews' ),
+			'hidden'  => __( 'Members Only', 'promatchups' ),
 			'visible' => sprintf( '%s, %s', $probability, ucfirst( strtolower( $likelihood ) ) ),
 		];
 	}
@@ -261,7 +261,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	$html  = '';
 	$html .= '<ul class="pm-prediction__list">';
 		if ( ! is_singular( 'matchup' ) ) {
-			$html .= sprintf( '<li class="pm-prediction__item label">%s</li>', __( 'Our Prediction', 'mai-asknews' ) );
+			$html .= sprintf( '<li class="pm-prediction__item label">%s</li>', __( 'Our Prediction', 'promatchups' ) );
 		}
 
 		// Loop through list.
@@ -322,12 +322,12 @@ function pm_get_odds_table( $data, $hidden = false ) {
 	// Start the odds.
 	$html .= '<div class="pm-odds pm-datatable">';
 		// Heading.
-		$html .= sprintf( '<p id="odds" class="has-xs-margin-bottom"><strong>%s</strong></p>', __( 'Moneyline Odds', 'mai-asknews' ) );
+		$html .= sprintf( '<p id="odds" class="has-xs-margin-bottom"><strong>%s</strong></p>', __( 'Moneyline Odds', 'promatchups' ) );
 
 		// Add a checkbox to expand/collapse the odds.
 		$toggle = '<div class="pm-toggle">';
 			$toggle .= '<label class="pm-toggle_label">';
-				$toggle .= __( 'Show All', 'mai-asknews' );
+				$toggle .= __( 'Show All', 'promatchups' );
 				$toggle .= '<input class="pm-toggle__input" name="pm-toggle__input" type="checkbox" />';
 				$toggle .= '<span class="pm-toggle__slider"></span>';
 			$toggle .= '</label>';
@@ -345,7 +345,7 @@ function pm_get_odds_table( $data, $hidden = false ) {
 			$html .= '<tbody>';
 
 			$html .= '<tr class="is-top">';
-				$html .= sprintf( '<td class="pm-odds__average">%s</td>', __( 'Average odds', 'mai-asknews' ) );
+				$html .= sprintf( '<td class="pm-odds__average">%s</td>', __( 'Average odds', 'promatchups' ) );
 
 				// Loop through the odds.
 				foreach ( $odds_data as $team => $values ) {
@@ -382,8 +382,8 @@ function pm_get_odds_table( $data, $hidden = false ) {
 
 					// If hidden, show N/A.
 					if ( $hidden ) {
-						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'mai-asknews' ) );
-						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'mai-asknews' ) );
+						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'promatchups' ) );
+						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'promatchups' ) );
 					}
 					// Otherwise, show the odds.
 					else {
@@ -451,12 +451,12 @@ function pm_get_spreads_table( $data, $hidden = false ) {
 	// Start the spreads.
 	$html .= '<div class="pm-spreads pm-datatable">';
 		// Heading.
-		$html .= sprintf( '<p id="spreads" class="has-xs-margin-bottom"><strong>%s</strong></p>', __( 'Point Spread Odds', 'mai-asknews' ) );
+		$html .= sprintf( '<p id="spreads" class="has-xs-margin-bottom"><strong>%s</strong></p>', __( 'Point Spread Odds', 'promatchups' ) );
 
 		// Add a checkbox to expand/collapse the spreads.
 		$toggle = '<div class="pm-toggle">';
 			$toggle .= '<label class="pm-toggle_label">';
-				$toggle .= __( 'Show All', 'mai-asknews' );
+				$toggle .= __( 'Show All', 'promatchups' );
 				$toggle .= '<input class="pm-toggle__input" name="pm-toggle__input" type="checkbox" />';
 				$toggle .= '<span class="pm-toggle__slider"></span>';
 			$toggle .= '</label>';
@@ -467,8 +467,8 @@ function pm_get_spreads_table( $data, $hidden = false ) {
 			$html .= '<thead>';
 				$html .= '<tr>';
 					$html .= sprintf( '<th>%s</th>', $toggle );
-					$html .= sprintf( '<th colspan="2">%s<span class="pm-spreads__th"><span>%s</span><span>%s</span></span></th>', $away_short, __( 'Odds', 'mai-asknews' ), __( 'Spread', 'mai-asknews' ) );
-					$html .= sprintf( '<th colspan="2">%s<span class="pm-spreads__th"><span>%s</span><span>%s</span></span></th>', $home_short, __( 'Odds', 'mai-asknews' ), __( 'Spread', 'mai-asknews' ) );
+					$html .= sprintf( '<th colspan="2">%s<span class="pm-spreads__th"><span>%s</span><span>%s</span></span></th>', $away_short, __( 'Odds', 'promatchups' ), __( 'Spread', 'promatchups' ) );
+					$html .= sprintf( '<th colspan="2">%s<span class="pm-spreads__th"><span>%s</span><span>%s</span></span></th>', $home_short, __( 'Odds', 'promatchups' ), __( 'Spread', 'promatchups' ) );
 				$html .= '</tr>';
 			$html .= '</thead>';
 			$html .= '<tbody>';
@@ -497,8 +497,8 @@ function pm_get_spreads_table( $data, $hidden = false ) {
 
 					// If hidden, show N/A.
 					if ( $hidden ) {
-						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'mai-asknews' ) );
-						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'mai-asknews' ) );
+						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'promatchups' ) );
+						$html .= sprintf( '<td>%s</td>', __( 'N/A', 'promatchups' ) );
 					}
 					// Otherwise, show the spreads.
 					else {
@@ -779,7 +779,7 @@ function pm_do_breadcrumbs() {
 	$breadcumbs = [
 		[
 			'url'  => home_url(),
-			'text' => __( 'Home', 'mai-asknews' ),
+			'text' => __( 'Home', 'promatchups' ),
 		],
 	];
 

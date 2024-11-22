@@ -447,7 +447,7 @@ class ProMatchups_Display {
 		}
 
 		// Add buttons to the membership levels.
-		$button = sprintf( '<div class="button button-secondary button-small">%s</div>', __( 'Choose Option', 'mai-asknews' ) );
+		$button = sprintf( '<div class="button button-secondary button-small">%s</div>', __( 'Choose Option', 'promatchups' ) );
 		$output = preg_replace( '/(<div\s+class="rcp_level_description">.*?<\/div>)/s', '$1' . $button, $output );
 
 		// Set up tag processor.

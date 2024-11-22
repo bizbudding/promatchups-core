@@ -72,8 +72,8 @@ class ProMatchups_Comments {
 	 * @return array
 	 */
 	function add_comment_type( $types ) {
-		$types['pm_vote']       = __( 'Votes', 'mai-asknews' );
-		$types['pm_commentary'] = __( 'Commentary', 'mai-asknews' );
+		$types['pm_vote']       = __( 'Votes', 'promatchups' );
+		$types['pm_commentary'] = __( 'Commentary', 'promatchups' );
 
 		return $types;
 	}

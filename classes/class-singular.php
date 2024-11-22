@@ -261,22 +261,22 @@ class ProMatchups_Singular {
 		// Display the nav.
 		echo '<ul class="pm-jumps">';
 			if ( $odds ) {
-				printf( '<li class="pm-jump"><a class="pm-jump__link" href="#odds">%s</a></li>', __( 'Odds', 'mai-asknews' ) );
+				printf( '<li class="pm-jump"><a class="pm-jump__link" href="#odds">%s</a></li>', __( 'Odds', 'promatchups' ) );
 			}
-			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#people">%s</a></li>', __( 'People', 'mai-asknews' ) );
-			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#timeline">%s</a></li>', __( 'Timeline', 'mai-asknews' ) );
-			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#sources">%s</a></li>', __( 'Latest News', 'mai-asknews' ) );
+			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#people">%s</a></li>', __( 'People', 'promatchups' ) );
+			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#timeline">%s</a></li>', __( 'Timeline', 'promatchups' ) );
+			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#sources">%s</a></li>', __( 'Latest News', 'promatchups' ) );
 
 			// TODO: Better name for external sources and sites talking about this.
-			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#web">%s</a></li>', __( 'Mentions', 'mai-asknews' ) );
+			printf( '<li class="pm-jump"><a class="pm-jump__link" href="#web">%s</a></li>', __( 'Mentions', 'promatchups' ) );
 
 			// If comments open.
 			if ( comments_open() ) {
-				printf( '<li class="pm-jump"><a class="pm-jump__link" href="#respond">%s</a></li>', __( 'Comments', 'mai-asknews' ) );
+				printf( '<li class="pm-jump"><a class="pm-jump__link" href="#respond">%s</a></li>', __( 'Comments', 'promatchups' ) );
 			}
 
 			// if ( $this->insights ) {
-			// 	printf( '<li class="pm-jump"><a class="pm-jump__link" href="#updates">%s</a></li>', __( 'Updates', 'mai-asknews' ) );
+			// 	printf( '<li class="pm-jump"><a class="pm-jump__link" href="#updates">%s</a></li>', __( 'Updates', 'promatchups' ) );
 			// }
 		echo '</ul>';
 	}
@@ -329,8 +329,8 @@ class ProMatchups_Singular {
 			// Header.
 			echo '<div class="pm-commentarysub__header">';
 				printf( '<div class="pm-commentarysub__avatar">%s</div>', $avatar );
-				printf( '<div class="pm-commentarysub__heading">%s</div>', sprintf( __( 'Hey %s, add your commentary below!', 'mai-asknews' ), $name ) );
-				printf( '<div class="pm-commentarysub__desc">%s</div>', __( 'Pro members have access to exclusive commentary from the Pro Squad members like you.', 'mai-asknews' ) );
+				printf( '<div class="pm-commentarysub__heading">%s</div>', sprintf( __( 'Hey %s, add your commentary below!', 'promatchups' ), $name ) );
+				printf( '<div class="pm-commentarysub__desc">%s</div>', __( 'Pro members have access to exclusive commentary from the Pro Squad members like you.', 'promatchups' ) );
 			echo '</div>';
 
 			// Textarea for commentary.
@@ -343,7 +343,7 @@ class ProMatchups_Singular {
 				echo '<div id="pm-commentarysub" class="pm-commentarysub__textarea"></div>';
 
 				// Add submit button and hidden fields.
-				printf( '<button class="pm-commentarysub__submit button button-secondary button-small" type="submit">%s</button>', __( 'Add Commentary', 'mai-asknews' ) );
+				printf( '<button class="pm-commentarysub__submit button button-secondary button-small" type="submit">%s</button>', __( 'Add Commentary', 'promatchups' ) );
 				printf( '<input type="hidden" name="action" value="pm_commentary_submission">' );
 				printf( '<input type="hidden" name="commentary_nonce" value="%s" />' , wp_create_nonce( 'pm_commentary_submission' ) );
 				printf( '<input type="hidden" name="commentary_user_id" value="%s"/>', $this->user->ID );
@@ -512,37 +512,37 @@ class ProMatchups_Singular {
 
 				// Display the heading and prediction list.
 				echo '<div class="pm-prediction__bubble">';
-					printf( '<h2>%s</h2>', __( 'My Prediction', 'mai-asknews' ) );
+					printf( '<h2>%s</h2>', __( 'My Prediction', 'promatchups' ) );
 					echo pm_get_prediction_list( $this->data, $hidden );
 				echo '</div>';
 			echo '</div>';
 
 			// Get reasoning and build keys.
-			$reasoning = sprintf( __( 'Either the %s or the %s are predicted to win this game. You do not have access to our predictions.', 'mai-asknews' ), $this->data['home_team'], $this->data['away_team'] );
+			$reasoning = sprintf( __( 'Either the %s or the %s are predicted to win this game. You do not have access to our predictions.', 'promatchups' ), $this->data['home_team'], $this->data['away_team'] );
 			$keys      = [
 				'forecast'               => [
-					'label'  => __( 'Forecast', 'mai-asknews' ),
-					'hidden' => sprintf( '%s %s %s', $this->data['home_team'], __( 'or', 'mai-asknews' ), $this->data['away_team'] ),
+					'label'  => __( 'Forecast', 'promatchups' ),
+					'hidden' => sprintf( '%s %s %s', $this->data['home_team'], __( 'or', 'promatchups' ), $this->data['away_team'] ),
 				],
 				'reasoning'              => [
-					'label'  => __( 'Reasoning', 'mai-asknews' ),
+					'label'  => __( 'Reasoning', 'promatchups' ),
 					'hidden' => $reasoning,
 				],
 				'score_rationale' => [
-					'label'  => __( 'Score Rationale', 'mai-asknews' ),
+					'label'  => __( 'Score Rationale', 'promatchups' ),
 					'hidden' => $reasoning,
 				],
 				// Disabled per Rob's request. "reconciled info is not really meant for anything besides internal thinking of the LLM".
 				// 'reconciled_information' => [
-				// 	'label'  => __( 'Reconciled Info', 'mai-asknews' ),
+				// 	'label'  => __( 'Reconciled Info', 'promatchups' ),
 				// 	'hidden' => $reasoning,
 				// ],
 				'unique_prediction'      => [
-					'label'  => __( 'Unique Prediction', 'mai-asknews' ),
+					'label'  => __( 'Unique Prediction', 'promatchups' ),
 					'hidden' => $reasoning,
 				],
 				'unique_information'     => [
-					'label'  => __( 'Unique Info', 'mai-asknews' ),
+					'label'  => __( 'Unique Info', 'promatchups' ),
 					'hidden' => $reasoning,
 				],
 			];
@@ -566,9 +566,9 @@ class ProMatchups_Singular {
 				if ( $hidden ) {
 					echo '<div class="pm-prediction__cta">';
 						echo '<div class="pm-prediction__cta-inner">';
-							printf( '<h3>%s</h3>', __( 'Advanced Insights', 'mai-asknews' ) );
-							printf( '<p>%s</p>', __( 'Advanced insights and predictions available to members.', 'mai-asknews' ) );
-							printf( '<a class="button" href="%s">%s</a>', get_permalink( 41 ), __( 'Get Access', 'mai-asknews' ) );
+							printf( '<h3>%s</h3>', __( 'Advanced Insights', 'promatchups' ) );
+							printf( '<p>%s</p>', __( 'Advanced insights and predictions available to members.', 'promatchups' ) );
+							printf( '<a class="button" href="%s">%s</a>', get_permalink( 41 ), __( 'Get Access', 'promatchups' ) );
 						echo '</div>';
 					echo '</div>';
 
@@ -580,7 +580,7 @@ class ProMatchups_Singular {
 
 					// Display the interesting stat.
 					if ( $stat ) {
-						$heading = sprintf( '<strong>%s:</strong> ', __( 'Interesting Statistic', 'mai-asknews' ) );
+						$heading = sprintf( '<strong>%s:</strong> ', __( 'Interesting Statistic', 'promatchups' ) );
 
 						printf( '<p>%s%s</p>', $heading, $stat );
 					}
@@ -590,7 +590,7 @@ class ProMatchups_Singular {
 
 					// Display the spread insights.
 					if ( $spread_insights ) {
-						printf( '<h3>%s</h3>', __( 'Spread Insights', 'mai-asknews' ) );
+						printf( '<h3>%s</h3>', __( 'Spread Insights', 'promatchups' ) );
 						echo implode( '', $spread_insights );
 					}
 
@@ -599,7 +599,7 @@ class ProMatchups_Singular {
 
 					// Display the takeaways.
 					if ( $takeaways ) {
-						printf( '<h3 class="has-lg-margin-top">%s</h3>', __( 'Key Takeaways', 'mai-asknews' ) );
+						printf( '<h3 class="has-lg-margin-top">%s</h3>', __( 'Key Takeaways', 'promatchups' ) );
 						echo '<ul>';
 							foreach ( (array) $takeaways as $takeaway ) {
 								printf( '<li>%s</li>', $takeaway );
@@ -612,7 +612,7 @@ class ProMatchups_Singular {
 
 					// Display the fantasy tip.
 					if ( $fantasy ) {
-						$heading = sprintf( '<h3 class="has-xxxs-margin-bottom">%s!</h3> ', __( 'Fantasy Tip', 'mai-asknews' ) );
+						$heading = sprintf( '<h3 class="has-xxxs-margin-bottom">%s!</h3> ', __( 'Fantasy Tip', 'promatchups' ) );
 						printf( '<div class="pm-prediction__fantasy">%s%s</div>', $heading, wpautop( $fantasy, false ) );
 					}
 
@@ -652,8 +652,8 @@ class ProMatchups_Singular {
 		}
 
 		// Start markup.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="people" ' : '', __( 'Key People', 'mai-asknews' ) );
-		printf( '<p>%s</p>', __( 'Key people highlighted in this matchup. Click to follow.', 'mai-asknews' ) );
+		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="people" ' : '', __( 'Key People', 'promatchups' ) );
+		printf( '<p>%s</p>', __( 'Key people highlighted in this matchup. Click to follow.', 'promatchups' ) );
 
 		echo '<ul class="pm-people">';
 
@@ -728,8 +728,8 @@ class ProMatchups_Singular {
 		}
 
 		// Heading and desc.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="injuries" ' : '', __( 'Injuries', 'mai-asknews' ) );
-		printf( '<p>%s</p>', __( 'Injuries that may affect the outcome of this matchup.', 'mai-asknews' ) );
+		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="injuries" ' : '', __( 'Injuries', 'promatchups' ) );
+		printf( '<p>%s</p>', __( 'Injuries that may affect the outcome of this matchup.', 'promatchups' ) );
 
 		echo '<ul class="pm-injuries">';
 			foreach ( $lis as $li ) {
@@ -755,8 +755,8 @@ class ProMatchups_Singular {
 		}
 
 		// Heading and desc.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="timeline" ' : '', __( 'Timeline', 'mai-asknews' ) );
-		printf( '<p>%s</p>', __( 'Timeline of relevant events and news articles.', 'mai-asknews' ) );
+		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="timeline" ' : '', __( 'Timeline', 'promatchups' ) );
+		printf( '<p>%s</p>', __( 'Timeline of relevant events and news articles.', 'promatchups' ) );
 
 		echo '<ul>';
 		foreach ( $timeline as $event ) {
@@ -782,7 +782,7 @@ class ProMatchups_Singular {
 		}
 
 		// Heading.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="sources" ' : '', __( 'Latest News by AskNews.app', 'mai-asknews' ) );
+		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="sources" ' : '', __( 'Latest News by AskNews.app', 'promatchups' ) );
 
 		// Start the list.
 		echo '<ul class="pm-sources">';
@@ -850,7 +850,7 @@ class ProMatchups_Singular {
 		// For subscription, show the last 2 weeks?
 
 		// Heading.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="web" ' : '', __( 'Around the Web', 'mai-asknews' ) );
+		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="web" ' : '', __( 'Around the Web', 'promatchups' ) );
 
 		// Start the list.
 		echo '<ul class="pm-results">';
@@ -904,7 +904,7 @@ class ProMatchups_Singular {
 		}
 
 		// Heading.
-		printf( '<h2 id="updates">%s</h2>', __( 'Previous Updates', 'mai-asknews' ) );
+		printf( '<h2 id="updates">%s</h2>', __( 'Previous Updates', 'promatchups' ) );
 
 		// Loop through insights.
 		foreach ( $insight_ids as $index => $insight_id ) {

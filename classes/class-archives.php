@@ -178,7 +178,7 @@ class ProMatchups_Archives {
 	 * @return void
 	 */
 	function do_teams() {
-		printf( '<h2 class="is-style-line has-xl-margin-bottom">%s</h2>', __( 'All Teams', 'mai-asknews' ) );
+		printf( '<h2 class="is-style-line has-xl-margin-bottom">%s</h2>', __( 'All Teams', 'promatchups' ) );
 		echo pm_get_teams_list();
 	}
 
@@ -190,7 +190,7 @@ class ProMatchups_Archives {
 	 * @return void
 	 */
 	function do_upcoming_heading() {
-		printf( '<h2 class="is-style-line has-xl-margin-bottom">%s</h2>', sprintf( __( 'Upcoming %s Games', 'mai-asknews' ), pm_get_team_name( [ 'fallback' => 'league' ] ) ) );
+		printf( '<h2 class="is-style-line has-xl-margin-bottom">%s</h2>', sprintf( __( 'Upcoming %s Games', 'promatchups' ), pm_get_team_name( [ 'fallback' => 'league' ] ) ) );
 	}
 
 	/**
@@ -211,7 +211,7 @@ class ProMatchups_Archives {
 		}
 
 		// Heading.
-		printf( '<h2 class="is-style-line has-xxl-margin-top has-xl-margin-bottom">%s</h2>', sprintf( __( 'Past %s Games', 'mai-asknews' ), pm_get_team_name( [ 'fallback' => 'league' ] ) ) );
+		printf( '<h2 class="is-style-line has-xxl-margin-top has-xl-margin-bottom">%s</h2>', sprintf( __( 'Past %s Games', 'promatchups' ), pm_get_team_name( [ 'fallback' => 'league' ] ) ) );
 
 		// Filter MPG query.
 		add_filter( 'mai_post_grid_query_args', [ $this, 'mpg_query_args' ], 10, 2 );
@@ -227,7 +227,7 @@ class ProMatchups_Archives {
 				'show'            => [ 'title', 'custom_content', 'excerpt', 'more_link' ],
 				'custom_content'  => '[pm_date]',
 				'more_link_style' => 'button_link',
-				'more_link_text'  => __( 'View Matchup', 'mai-asknews' ),
+				'more_link_text'  => __( 'View Matchup', 'promatchups' ),
 				'boxed'           => false,
 				'class'           => 'pm-matchups',
 			]
@@ -316,6 +316,6 @@ class ProMatchups_Archives {
 	 * @return string
 	 */
 	function get_noposts_text() {
-		return '<p>' . __( 'Check back soon! We are busy getting the next matchups ready.', 'mai-asknews' ) . '</p>';
+		return '<p>' . __( 'Check back soon! We are busy getting the next matchups ready.', 'promatchups' ) . '</p>';
 	}
 }

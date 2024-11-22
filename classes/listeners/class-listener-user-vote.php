@@ -52,7 +52,7 @@ class ProMatchups_User_Vote_Listener extends ProMatchups_Listener {
 		if ( $existing['id'] && $existing['name'] ) {
 			// If the same team.
 			if ( $this->team === $existing['name'] ) {
-				$this->return = $this->get_success( sprintf( __( 'Vote has not been saved. User has already voted for %s.', 'mai-asknews' ), $this->team ) );
+				$this->return = $this->get_success( sprintf( __( 'Vote has not been saved. User has already voted for %s.', 'promatchups' ), $this->team ) );
 				return;
 			}
 		}
@@ -73,7 +73,7 @@ class ProMatchups_User_Vote_Listener extends ProMatchups_Listener {
 		}
 
 		// Set the return message.
-		$this->return = $this->get_success( sprintf( __( 'Vote saved for %s. Comment ID: %s', 'mai-asknews' ), $this->team, $comment_id ) );
+		$this->return = $this->get_success( sprintf( __( 'Vote saved for %s. Comment ID: %s', 'promatchups' ), $this->team, $comment_id ) );
 		return;
 	}
 }

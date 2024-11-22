@@ -1639,7 +1639,7 @@ footer.site-footer {
 	width: 200px;
 	height: 200px;
 	margin: 0 var(--side-spacing) -24px auto;
-	background: url( '/wp-content/plugins/mai-asknews/src/img/chad-footer.png' ) no-repeat;
+	background: url( '/wp-content/plugins/promatchups-core/src/img/chad-footer.png' ) no-repeat;
 	background-size: contain;
 	z-index: 1;
 	content: "";

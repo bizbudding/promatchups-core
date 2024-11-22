@@ -64,12 +64,12 @@ class ProMatchups_Ajax_Post_Commentary {
 
 		// Verify nonce for security.
 		if ( ! isset( $_POST['commentary_nonce'] ) || ! wp_verify_nonce( $_POST['commentary_nonce'], 'pm_commentary_submission' ) ) {
-			$this->handle_error( __( 'Commentary submission security check failed.', 'mai-asknews' ) );
+			$this->handle_error( __( 'Commentary submission security check failed.', 'promatchups' ) );
 		}
 
 		// Bail if no user ID.
 		if ( ! $user_id ) {
-			$this->handle_error( __( 'No user ID found.', 'mai-asknews' ) );
+			$this->handle_error( __( 'No user ID found.', 'promatchups' ) );
 		}
 
 		// Get user.
@@ -77,17 +77,17 @@ class ProMatchups_Ajax_Post_Commentary {
 
 		// Bail if no user.
 		if ( ! $user ) {
-			$this->handle_error( __( 'No user found.', 'mai-asknews' ) );
+			$this->handle_error( __( 'No user found.', 'promatchups' ) );
 		}
 
 		// Bail if no matchup ID.
 		if ( ! $matchup_id ) {
-			$this->handle_error( 'No matchup ID found.', 'mai-asknews' );
+			$this->handle_error( 'No matchup ID found.', 'promatchups' );
 		}
 
 		// Bail if no commentary.
 		if ( ! $commentary ) {
-			$this->handle_error( 'No commentary found.', 'mai-asknews' );
+			$this->handle_error( 'No commentary found.', 'promatchups' );
 		}
 
 		// Insert the commentary.
@@ -106,7 +106,7 @@ class ProMatchups_Ajax_Post_Commentary {
 
 		// Bail if no comment ID.
 		if ( ! $comment_id ) {
-			$this->handle_error( __( 'Commentary could not be added.', 'mai-asknews' ) );
+			$this->handle_error( __( 'Commentary could not be added.', 'promatchups' ) );
 		}
 
 		// Bail if error.
@@ -117,7 +117,7 @@ class ProMatchups_Ajax_Post_Commentary {
 		// If ajax, send it.
 		if ( $this->ajax ) {
 			// Send success response.
-			wp_send_json_success( [ 'message' => __( 'Your commentary was successfully added!', 'mai-asknews' ) ] );
+			wp_send_json_success( [ 'message' => __( 'Your commentary was successfully added!', 'promatchups' ) ] );
 			exit;
 		}
 

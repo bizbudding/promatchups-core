@@ -205,7 +205,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	$probability      = $probability ? $probability . '%' : '';
 	$likelihood       = $data['likelihood'];
 	$spread_covered   = $data['spread_covered'];
-	$predicted_score  = $data['predicted_score'] ? implode( ' - ', (array) $data['predicted_score'] ) : '';
+	$predicted_score  = $data['predicted_score'] ? implode( '-', (array) $data['predicted_score'] ) : '';
 
 	// If prediction.
 	if ( $prediction_short ) {
@@ -247,8 +247,8 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	if ( $predicted_score ) {
 		if ( current_user_can( 'manage_options' ) ) {
 			$list['score'] = [
-				'hidden'  => sprintf( 'Predicted score: %s', $predicted_score ),
-				'visible' => sprintf( 'Predicted score: %s', $predicted_score ),
+				'hidden'  => sprintf( 'Score (admin-only): %s', $predicted_score ),
+				'visible' => sprintf( 'Score (admin-only): %s', $predicted_score ),
 			];
 		}
 	}

@@ -156,7 +156,7 @@ function pm_get_singular_vote_box() {
 	// If they have already voted.
 	elseif ( $vote ) {
 		$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Make Your Pick', 'promatchups' ) );
-		$desc    = sprintf( '<p>%s</p>', sprintf( __( 'You have already voted for the %s; leave it as is or change your vote before game time.', 'promatchups' ), $data['prediction'] ) );
+		$desc    = sprintf( '<p>%s</p>', sprintf( __( 'You have already voted for the %s; leave it as is or change your vote before game time.', 'promatchups' ), $vote ) );
 	}
 	// Fallback for voting.
 	else {
@@ -307,7 +307,7 @@ function pm_get_outcome_box( $data ) {
 	$h2h   = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : '';
 	$ats   = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : '';
 	$html .= '<div class="pm-adminoutcome">';
-		$html .= sprintf( '<p class="pm-adminoutcome__heading">%s:</p>', __( 'My Results (admin only)', 'promatchups' ) );
+		$html .= sprintf( '<p class="pm-adminoutcome__heading">%s:</p>', __( 'Bot Results (admins)', 'promatchups' ) );
 		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $h2h, __( 'H2H', 'promatchups' ) );
 		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $ats, __( 'ATS', 'promatchups' ) );
 	$html .= '</div>';

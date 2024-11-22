@@ -42,8 +42,8 @@ class ProMatchups_Endpoints {
 	function register_endpoints() {
 		/**
 		 * NEW:
-		 * /promatchups/v1/insights/
-		 * /promatchups/v1/outcome/
+		 * /asknews/v1/insight/
+		 * /asknews/v1/outcome/
 		 *
 		 * OLD:
 		 * /maiasknews/v1/matchups/
@@ -51,14 +51,14 @@ class ProMatchups_Endpoints {
 		 */
 		$routes = [
 			// 'matchups' => 'handle_insight_request',
-			'insights' => 'handle_insight_request',
-			'outcome'  => 'handle_outcome_request',
+			'insight' => 'handle_insight_request',
+			'outcome' => 'handle_outcome_request',
 		];
 
 		// Loop through routes and register them.
 		foreach ( $routes as $path => $callback ) {
 			// register_rest_route( 'maiasknews/v1', $path, [
-			register_rest_route( 'promatchups/v1', $path, [
+			register_rest_route( 'asknews/v1', $path, [
 				'methods'             => 'POST', // I think the testing CLI needs PUT. The API does check for auth cookies and nonces when you make POST or PUT requests, but not GET requests.
 				'callback'            => [ $this, $callback ],
 				'permission_callback' => [ $this, 'authenticate_request' ],

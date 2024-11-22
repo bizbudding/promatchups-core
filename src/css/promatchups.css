@@ -877,7 +877,7 @@ body {
 body:not(.single) {
 
 	.pm-adminoutcome {
-		margin-top: var(--spacing-lg	);
+		margin-top: var(--spacing-xl);
 	}
 }
 

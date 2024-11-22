@@ -1,0 +1,19 @@
+{
+	"name": "mai-asknews",
+	"version": "0.3.0",
+	"description": "Custom functionality for promatchups.com.",
+	"main": "index.js",
+	"scripts": {
+		"dev": "mix",
+		"production": "mix --production",
+		"watch": "mix watch"
+	},
+	"author": "Dappier",
+	"license": "MIT",
+	"dependencies": {
+		"@emergentmethods/asknews-typescript-sdk": "^0.2.16",
+		"dayjs": "^1.11.13",
+		"laravel-mix": "^6.0.49",
+		"marked": "^14.1.2"
+	}
+}

@@ -247,8 +247,8 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	if ( $predicted_score ) {
 		if ( current_user_can( 'manage_options' ) ) {
 			$list['score'] = [
-				'hidden'  => sprintf( 'Score (admin-only): %s', $predicted_score ),
-				'visible' => sprintf( 'Score (admin-only): %s', $predicted_score ),
+				'hidden'  => sprintf( 'Score (admins): %s', $predicted_score ),
+				'visible' => sprintf( 'Score (admins): %s', $predicted_score ),
 			];
 		}
 	}

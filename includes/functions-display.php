@@ -43,7 +43,7 @@ function pm_get_updated_date() {
 	// Set vars.
 	$updated = '';
 	$data    = pm_get_matchup_data( get_the_ID() );
-	$date    = $data['date'];
+	$date    = $data['date_modified'];
 
 	// Bail if no date.
 	if ( ! $date ) {
@@ -270,33 +270,6 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 			$html .= sprintf( '<li class="pm-prediction__item %s">%s</li>', $class, $value );
 		}
 	$html .= '</ul>';
-
-	// If an admin.
-	if ( current_user_can( 'manage_options' ) && $data['has_outcome'] && is_singular() ) {
-		// Set the mapping.
-		$map = [
-			-1        => 'Loss',
-			1         => 'Win',
-			2         => 'Push',
-			'default' => 'n/a',
-		];
-
-		// Get the data.
-		$moneyline = $data['moneyline_result'];
-		$spread    = $data['spread_result'];
-		$moneyline = isset( $map[ $moneyline ] ) ? $map[ $moneyline ] : $map['default'];
-		$spread    = isset( $map[ $spread ] ) ? $map[ $spread ] : $map['default'];
-
-		// Add the result.
-		$html .= sprintf( '<p class="is-style-heading has-xl-margin-top has-xxs-margin-bottom">%s</p>', __( 'My Result (admin only)', 'mai-asknews' ) );
-		// $html .= '<div style="display:grid;gap:0 1em;grid-template-columns:auto 1fr;">';
-			// $html .= sprintf( '<span>%s:</span><span>%s</span>', __( 'H2H', 'mai-asknews' ), $moneyline );
-			// $html .= sprintf( '<span>%s:</span><span>%s</span>', __( 'ATS', 'mai-asknews' ), $spread );
-		// $html .= '</div>';
-		$html .= sprintf( '<p class="has-no-margin-bottom">%s: %s</p>', __( 'H2H', 'mai-asknews' ), $moneyline );
-		$html .= sprintf( '<p class="has-no-margin-bottom">%s: %s</p>', __( 'ATS', 'mai-asknews' ), $spread );
-	}
-
 
 	return $html;
 }

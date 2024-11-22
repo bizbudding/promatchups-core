@@ -305,7 +305,7 @@ function pm_get_outcome_box( $data ) {
 	$h2h   = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : '';
 	$ats   = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : '';
 	$html .= '<div class="pm-adminoutcome">';
-		$html .= sprintf( '<p class="pm-adminoutcome__heading">%s:</p>', __( 'My Predictions', 'promatchups' ) );
+		$html .= sprintf( '<p class="pm-adminoutcome__heading">%s:</p>', __( 'My Results (admin only)', 'promatchups' ) );
 		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $h2h, __( 'H2H', 'promatchups' ) );
 		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $ats, __( 'ATS', 'promatchups' ) );
 	$html .= '</div>';

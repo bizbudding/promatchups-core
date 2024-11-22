@@ -122,6 +122,8 @@ function pm_get_singular_vote_box() {
 	// $show_outcome = $started && $data['winner_team'] && $data['loser_team'];
 	$show_outcome = $started;
 	$show_vote    = ! $started && $has_access;
+	$vote         = $user && $user->ID ? pm_get_user_vote( $matchup_id, $user->ID ) : [];
+	$vote         = isset( $vote['name'] ) ? $vote['name'] : '';
 
 	// Add data.
 	$data['redirect'] = get_permalink( $matchup_id ) . '#vote';
@@ -152,7 +154,7 @@ function pm_get_singular_vote_box() {
 		}
 	}
 	// If they have already voted.
-	elseif ( $data['prediction'] ) {
+	elseif ( $vote ) {
 		$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Make Your Pick', 'promatchups' ) );
 		$desc    = sprintf( '<p>%s</p>', sprintf( __( 'You have already voted for the %s; leave it as is or change your vote before game time.', 'promatchups' ), $data['prediction'] ) );
 	}

@@ -297,19 +297,17 @@ function pm_get_outcome_box( $data ) {
 	// Bot results.
 	// TODO: Checkmark for correct, x for incorrect, dash for push.
 	$map = [
-		1 => '✅',
-		-1 => '❌',
-		2 => '➖',
-		'default' => 'n/a',
+		1  => ' win',
+		-1 => ' loss',
+		2  => ' push',
 	];
 
-	$h2h = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : $map['default'];
-	$ats = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : $map['default'];
-
-	$html .= '<div style="display:flex;gap:1em;justify-content:center;align-items:center;--heading-margin-bottom:0;--paragraph-margin-bottom:0;">';
-		$html .= sprintf( '<p class="is-style-heading">%s</p>&mdash;', __( 'My Predictions', 'promatchups' ) );
-		$html .= sprintf( '<p class="">%s: %s</p>', __( 'H2H', 'promatchups' ), $h2h );
-		$html .= sprintf( '<p class="">%s: %s</p>', __( 'ATS', 'promatchups' ), $ats );
+	$h2h   = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : '';
+	$ats   = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : '';
+	$html .= '<div class="pm-adminoutcome">';
+		$html .= sprintf( '<p class="pm-adminoutcome__heading">%s:</p>', __( 'My Predictions', 'promatchups' ) );
+		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $h2h, __( 'H2H', 'promatchups' ) );
+		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $ats, __( 'ATS', 'promatchups' ) );
 	$html .= '</div>';
 
 	return $html;

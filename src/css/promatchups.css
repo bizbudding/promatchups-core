@@ -867,9 +867,11 @@ body {
 	--heading-margin-bottom: 0;
 	--paragraph-margin-bottom: 0;
 	display: flex;
-	gap: 1em;
+	gap: .6em;
 	justify-content: center;
 	align-items: center;
+	font-size: .8em;
+	text-transform: uppercase;
 }
 
 body:not(.single) {
@@ -879,21 +881,17 @@ body:not(.single) {
 	}
 }
 
-.pm-adminoutcome__heading {
-	font-size: .8em;
-	text-transform: uppercase;
-}
-
 .pm-adminoutcome__result {
 	display: flex;
 	align-items: center;
+	font-weight: var(--body-font-weight-bold);
 }
 
 .pm-adminoutcome__result::after {
 	display: inline-flex;
-	width: 24px;
-	height: 24px;
-	margin-left: var(--spacing-xxxs);
+	width: 18px;
+	height: 18px;
+	margin-left: 2px;
 	mask-position: center;
 	mask-repeat: no-repeat;
 	mask-size: contain;

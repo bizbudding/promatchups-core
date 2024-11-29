@@ -294,7 +294,7 @@ body {
 	--list-margin: 0;
 	--list-item-margin: 0;
 	display: grid;
-	gap: var(--spacing-xxs);
+	gap: var(--spacing-xs);
 	align-self: start; /* when a flex-item via .entry-wrap */
 	font-size: var(--font-size-sm);
 }
@@ -303,6 +303,7 @@ body {
 	display: flex;
 	gap: var(--spacing-sm);
 	align-items: center;
+	line-height: var(--line-height-sm);
 }
 
 .pm-prediction__item.choice::before,

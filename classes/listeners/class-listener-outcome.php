@@ -84,6 +84,18 @@ class ProMatchups_AskNews_Outcome_Listener extends ProMatchups_Listener {
 		$body_uuid    = isset( $this->body['event_uuid'] ) ? $this->body['event_uuid'] : '';
 		$outcome_uuid = isset( $this->outcome['event_uuid'] ) ? $this->outcome['event_uuid'] : '';
 
+		// Bail if no body UUID.
+		if ( ! $body_uuid ) {
+			$this->return = $this->get_error( 'No event_uuid found in matchup body.' );
+			return;
+		}
+
+		// Bail if no outcome UUID.
+		if ( ! $outcome_uuid ) {
+			$this->return = $this->get_error( 'No event_uuid found in outcome.' );
+			return;
+		}
+
 		// If UUIDs don't match.
 		if ( $body_uuid !== $outcome_uuid ) {
 			$this->return = $this->get_error( 'UUIDs do not match.' );

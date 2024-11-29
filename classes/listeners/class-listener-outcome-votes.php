@@ -69,8 +69,9 @@ class ProMatchups_Outcome_Votes_Listener extends ProMatchups_Listener {
 	 * @return void
 	 */
 	function update_comments() {
-		$comments = 0;
-		$users    = 0;
+		$users_to_update = [];
+		$comments        = 0;
+		$users           = 0;
 
 		// Get all votes for this matchup.
 		$votes = get_comments(
@@ -126,7 +127,7 @@ class ProMatchups_Outcome_Votes_Listener extends ProMatchups_Listener {
 			}
 
 			// Get the date.
-			$event_date = isset( $data['date'] ) && $data['date'] ? wp_date( 'Y-m-d H:i:s', $data['date'] ) : wp_date( 'Y-m-d H:i:s' );
+			$event_date = isset( $this->data['date'] ) && $this->data['date'] ? wp_date( 'Y-m-d H:i:s', $this->data['date'] ) : wp_date( 'Y-m-d H:i:s' );
 
 			// Update comment,
 			$update = wp_update_comment(
@@ -143,14 +144,19 @@ class ProMatchups_Outcome_Votes_Listener extends ProMatchups_Listener {
 				$comments++;
 			}
 
-			// If updating the user's points.
+			// Collect user IDs for updating points.
 			if ( $this->update_points ) {
-				$listener = new ProMatchups_User_Points( $user );
-				$response = $listener->get_response();
+				$users_to_update[ $user->ID ] = $user;
 			}
 
 			// Increment users.
 			$users++;
+		}
+
+		// If updating the user's points, update user points.
+		foreach ( $users_to_update as $user ) {
+			$listener = new ProMatchups_User_Points( $user );
+			$response = $listener->get_response();
 		}
 
 		return [

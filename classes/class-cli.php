@@ -7,6 +7,20 @@ use Ramsey\Uuid\Uuid;
 use League\CommonMark\CommonMarkConverter;
 
 /**
+ * Temporarily disable doing_it_wrong errors when WP_CLI is running.
+ * This is for `_load_textdomain_just_in_time` errors since WP 6.7.
+ *
+ * TODO: Remove?
+ *
+ * @since TBD
+ *
+ * @return bool
+ */
+add_filter( 'doing_it_wrong_trigger_error', function( $return ) {
+	return defined( 'WP_CLI' ) && WP_CLI ? false : $return;
+}, 999 );
+
+/**
  * Gets it started.
  *
  * @since 0.1.0
@@ -114,7 +128,7 @@ class ProMatchups_CLI {
 					$assoc_args['meta_query'] = [
 						[
 							'key'     => 'event_date',
-							'value'   => [ strtotime( $assoc_args['date_after'] ), strtotime( $assoc_args['date_before'] ) ],
+							'value'   => [ strtotime( $assoc_args['date_before'] ), strtotime( $assoc_args['date_after'] ) ],
 							'compare' => 'BETWEEN',
 							'type'    => 'NUMERIC',
 						],

@@ -128,7 +128,7 @@ class ProMatchups_CLI {
 					$assoc_args['meta_query'] = [
 						[
 							'key'     => 'event_date',
-							'value'   => [ strtotime( $assoc_args['date_before'] ), strtotime( $assoc_args['date_after'] ) ],
+							'value'   => [ strtotime( $assoc_args['date_after'] ), strtotime( $assoc_args['date_before'] ) ],
 							'compare' => 'BETWEEN',
 							'type'    => 'NUMERIC',
 						],

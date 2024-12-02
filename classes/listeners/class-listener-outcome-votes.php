@@ -153,11 +153,12 @@ class ProMatchups_Outcome_Votes_Listener extends ProMatchups_Listener {
 			$users++;
 		}
 
-		// If updating the user's points, update user points.
-		foreach ( $users_to_update as $user ) {
-			$listener = new ProMatchups_User_Points( $user );
-			$response = $listener->get_response();
-		}
+		// DISABLED FOR NOW TO SEE IF IT FIXES TIMEOUTS.
+		// // If updating the user's points, update user points.
+		// foreach ( $users_to_update as $user ) {
+		// 	$listener = new ProMatchups_User_Points( $user );
+		// 	$response = $listener->get_response();
+		// }
 
 		return [
 			'votes' => $comments,

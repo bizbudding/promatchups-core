@@ -32,29 +32,8 @@ class ProMatchups_CLI {
 	 * Construct the class.
 	 */
 	function __construct() {
-		$username = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : null;
-		$password = defined( 'PROMATCHUPS_AUTH_PW' ) ? PROMATCHUPS_AUTH_PW : null;
-
-		// Bail if no username.
-		if ( ! $username ) {
-			WP_CLI::error( 'No username found via PROMATCHUPS_AUTH_UN constant.' );
-			return;
-		}
-
-		// Bail if no password.
-		if ( ! $password ) {
-			WP_CLI::error( 'No password found via PROMATCHUPS_AUTH_PW constant.' );
-			return;
-		}
-
-		// Get user.
-		$this->user = get_user_by( 'login', $username );
-
-		// Bail if no user.
-		if ( ! $this->user ) {
-			WP_CLI::error( 'No user found with username: ' . $username );
-			return;
-		}
+		$username   = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : null;
+		$this->user = $username ? get_user_by( 'login', $username ) : null;
 	}
 
 	/**
@@ -75,6 +54,7 @@ class ProMatchups_CLI {
 	 *
 	 * Usage:
 	 * wp promatchups create_votes_csv --posts_per_page=10000000
+	 * wp promatchups create_votes_csv --posts_per_page=1000 --date_after="Nov 27, 2024 12am EST" --date_before="Dec 6, 2024" --league=NFL
 	 * wp promatchups create_votes_csv --posts_per_page=1000 --date_after="Nov 13, 2024 12am EST" --league=NFL
 	 * wp promatchups create_votes_csv --posts_per_page=100 --league=NBA --vote_type=pm_spread --vote_result=1 --user_id=1
 	 *

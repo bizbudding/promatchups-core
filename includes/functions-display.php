@@ -301,7 +301,7 @@ function pm_get_botresults( $data ) {
 		$html .= sprintf( '<p class="pm-botresults__heading">%s</p>', __( 'Bot Results', 'promatchups' ) );
 		$html .= '<span class="pm-botresults__sep">&ndash;</span>';
 		$html .= sprintf( '<p class="pm-botresults__result%s">%s</p>', $h2h, __( 'H2H', 'promatchups' ) );
-		$html .= sprintf( '<p class="pm-botresults__result%s">%s</p>', $ats, __( 'ATS', 'promatchups' ) );
+		$html .= sprintf( '<p class="pm-botresults__result%s">%s</p>', $ats, __( 'Spread', 'promatchups' ) );
 	$html .= '</div>';
 
 	return $html;

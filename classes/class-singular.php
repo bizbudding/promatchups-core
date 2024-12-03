@@ -104,7 +104,8 @@ class ProMatchups_Singular {
 					'meta_value'   => $event_uuid,
 					'meta_compare' => '=',
 					'fields'       => 'ids',
-					'numberposts'  => -1,				]
+					'numberposts'  => -1,
+				]
 			);
 		}
 		// No event uuid, no insights.
@@ -516,6 +517,161 @@ class ProMatchups_Singular {
 					echo pm_get_prediction_list( $this->data, $hidden );
 				echo '</div>';
 			echo '</div>';
+
+
+
+			// If first.
+			if ( $first ) {
+
+				// Prediction note.
+				printf( '<p class="has-sm-font-size"><em>%s</em></p>', __( 'SportsDesk Bot predictions are posted as early as possible to help you take advantage of early odds or spreads. Our final forecast is published on the site one hour before the match begins.', 'promatchups' ) );
+
+				// Build teams array.
+				$teams = array_filter( [
+					$this->data['away_team'],
+					$this->data['home_team'],
+				] );
+
+				// If teams.
+				if ( $teams && 2 === count( $teams ) ) {
+					// Results map.
+					$map = [
+						-1 => ' loss',
+						1  => ' win',
+						2  => ' push',
+						null => ' null+',
+					];
+
+					// Loop through teams.
+					foreach ( $teams as $team ) {
+						// Start table.
+						$table = [];
+
+						// Get team term.
+						$term = get_term_by( 'name', $team, 'league' );
+
+						// Skip if no term.
+						if ( ! $term ) {
+							continue;
+						}
+
+						// Get latest matchups by team.
+						$query = new WP_Query(
+							[
+								'post_type'              => 'matchup',
+								'posts_per_page'         => 5,
+								'no_found_rows'          => true,
+								'update_post_meta_cache' => false,
+								'update_post_term_cache' => false,
+								'meta_key'               => 'event_date',
+								'orderby'                => 'meta_value_num',
+								'order'                  => 'DESC',
+								'post__not_in'           => [ get_the_ID() ],
+								'tax_query'              => [
+									[
+										'taxonomy' => 'league',
+										'field'    => 'term_id',
+										'terms'    => $term->term_id,
+									],
+								],
+								'meta_query'             => [
+									'relation' => 'AND',
+									[
+										'key'     => 'asknews_outcome',
+										'compare' => '!=',
+										'value'   => '',
+									],
+									[
+										'key'     => 'event_date',
+										'value'   => strtotime( '-2 hours' ),
+										'compare' => '<',
+										'type'    => 'NUMERIC',
+									],
+								],
+							]
+						);
+
+						// Loop through posts.
+						if ( $query->have_posts() ) {
+							while ( $query->have_posts() ) : $query->the_post();
+								$matchup_data = pm_get_matchup_data( get_the_ID() );
+
+								// Skip if no outcome.
+								if ( ! $matchup_data['has_outcome'] ) {
+									continue;
+								}
+
+								// Get date and results.
+								$matchup_date     = date( 'M j', $matchup_data['date'] );
+								$moneyline_result = pm_get_moneyline_result( $matchup_data['prediction'], $matchup_data );
+								$spread_result    = pm_get_spread_result( $matchup_data['prediction'], $matchup_data['spread_covered'], $matchup_data );
+
+								// Skip if both null.
+								if ( is_null( $moneyline_result ) && is_null( $spread_result ) ) {
+									continue;
+								}
+
+								// Add to table.
+								$table[] = [
+									'date'             => $matchup_date,
+									'title'            => get_the_title(),
+									'permalink'        => get_permalink(),
+									'moneyline_result' => $moneyline_result,
+									'spread_result'    => $spread_result,
+								];
+
+							endwhile;
+						}
+						wp_reset_postdata();
+
+						// If we have a table.
+						if ( $table ) {
+							$html  = '';
+							$html .= '<div class="pm-previousresults">';
+								// Heading.
+								$html .= sprintf( '<p class="pm-previousresults__heading is-style-heading">%s %s %s</p>', __( 'Previous', 'promatchups' ), pm_get_team_short_name( $team, $this->data['league'] ), __( 'Predictions', 'promatchups' ) );
+
+								// Start table.
+								$html .= '<table class="pm-previousresults__table">';
+									// Head.
+									$html .= '<thead>';
+										$html .= '<tr>';
+											$html .= sprintf( '<th>%s</th>', __( 'Date', 'promatchups' ) );
+											$html .= sprintf( '<th>%s</th>', __( 'Matchup', 'promatchups' ) );
+											$html .= sprintf( '<th class="has-text-align-center">%s</th>', __( 'H2H', 'promatchups' ) );
+											$html .= sprintf( '<th class="has-text-align-center">%s</th>', __( 'Spread', 'promatchups' ) );
+										$html .= '</tr>';
+									$html .= '</thead>';
+
+									// Body.
+									$html .= '<tbody>';
+										// Build table data from array.
+										foreach ( $table as $row ) {
+											// Start row.
+											$html .= '<tr>';
+												// Date.
+												$html .= sprintf( '<td class="pm-previous__date"><a href="%s" title="%s">%s</a></td>', $row['permalink'], $row['title'], $row['date'] );
+
+												// Matchup.
+												$html .= sprintf( '<td class="pm-previous__matchup"><a href="%s" title="%s">%s</a></td>', $row['permalink'], $row['title'], $row['title'] );
+
+												// Moneyline result.
+												$html .= sprintf( '<td class="pm-previous__h2h pm-previous__icon %s"><span class="screen-reader-text">%s</span></td>', $map[ $row['moneyline_result'] ], ucwords( $map[ $row['moneyline_result'] ] ) );
+
+												// Spread result.
+												$html .= sprintf( '<td class="pm-previous__ats pm-previous__icon %s"><span class="screen-reader-text">%s</span></td>', $map[ $row['spread_result'] ], ucwords( $map[ $row['spread_result'] ] ) );
+											$html .= '</tr>';
+										}
+									$html .= '</tbody>';
+								$html .= '</table>';
+							$html .= '</div>';
+
+							// Display the table.
+							echo $html;
+						}
+					}
+				}
+			}
 
 			// Get reasoning and build keys.
 			$reasoning = sprintf( __( 'Either the %s or the %s are predicted to win this game. You do not have access to our predictions.', 'promatchups' ), $this->data['home_team'], $this->data['away_team'] );

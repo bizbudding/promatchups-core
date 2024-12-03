@@ -34,7 +34,7 @@ function pm_get_archive_vote_box() {
 	// Set vars.
 	$has_access   = $user && $user->ID;
 	$started      = time() > $timestamp;
-	$show_outcome = $started && $data['winner_team'] && $data['loser_team'];
+	$show_outcome = $started && $data['has_outcome'];
 	$show_vote    = ! $started && $has_access;
 
 	// Bail if conditions are not met.
@@ -186,7 +186,7 @@ function pm_get_singular_vote_box() {
 			$html .= pm_get_outcome_box( $data );
 
 			// If user has access, show bot results.
-			if ( pm_has_access() ) {
+			if ( pm_has_access() && $data['has_outcome'] ) {
 				$html .= pm_get_botresults( $data );
 			}
 		}

@@ -873,6 +873,7 @@ body {
 .pm-previousresults__table {
 	/* --link-color: var(--color-white); */
 	--link-color: currentColor;
+	--link-text-decoration-hover: none;
 	--table-margin: 0 0 var(--spacing-xl);
 	--table-padding: var(--spacing-xxxs) var(--spacing-xs);
 	--table-header-background-color: transparent;

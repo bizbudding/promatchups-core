@@ -12,7 +12,7 @@ use League\CommonMark\CommonMarkConverter;
  *
  * TODO: Remove?
  *
- * @since TBD
+ * @since 1.0.0
  *
  * @return bool
  */

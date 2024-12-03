@@ -277,7 +277,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 /**
  * Get the bot results.
  *
- * @since TBD
+ * @since 1.0.0
  *
  * @param array $data The matchup data.
  *

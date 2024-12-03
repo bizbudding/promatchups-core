@@ -4,7 +4,7 @@
  * Plugin Name:     Pro Matchups Core
  * Plugin URI:      https://promatchups.com
  * Description:     Core functionality for promatchups.com.
- * Version:         1.0.0-beta.2
+ * Version:         1.0.0-beta.3
  *
  * Author:          BizBudding
  * Author URI:      https://bizbudding.com
@@ -99,7 +99,7 @@ final class ProMatchups_Plugin {
 	private function setup_constants() {
 		// Plugin version.
 		if ( ! defined( 'PROMATCHUPS_PLUGIN_VERSION' ) ) {
-			define( 'PROMATCHUPS_PLUGIN_VERSION', '1.0.0-beta.2' );
+			define( 'PROMATCHUPS_PLUGIN_VERSION', '1.0.0-beta.3' );
 		}
 
 		// Plugin Folder Path.

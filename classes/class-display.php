@@ -261,16 +261,19 @@ class ProMatchups_Display {
 
 		// Get the data.
 		$matchup_id = get_the_ID();
-		$access     = pm_has_access();
+		$has_access = pm_has_access();
 		$data       = pm_get_matchup_data( $matchup_id );
-		$list       = pm_get_prediction_list( $data, ! $access );
 		$vote       = pm_get_archive_vote_box();
 
-		// Build the markup.
+		// Start the markup.
 		$html = '';
-		if ( $access ) {
-			$html .= $list;
+
+		// If user has access, show predictions.
+		if ( $has_access ) {
+			$html .= pm_get_prediction_list( $data, ! $has_access );
 		}
+
+		// Add the vote box.
 		$html .= $vote;
 
 		// If we have markup, wrap it.

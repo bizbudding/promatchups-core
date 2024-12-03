@@ -54,6 +54,11 @@ function pm_get_archive_vote_box() {
 
 			// Outcome box.
 			$html .= pm_get_outcome_box( $data );
+
+			// If user has access, show bot results.
+			if ( pm_has_access() ) {
+				$html .= pm_get_botresults( $data );
+			}
 		}
 		// If not started and they have access to vote.
 		elseif ( $has_access ) {
@@ -179,6 +184,11 @@ function pm_get_singular_vote_box() {
 
 			// Outcome box.
 			$html .= pm_get_outcome_box( $data );
+
+			// If user has access, show bot results.
+			if ( pm_has_access() ) {
+				$html .= pm_get_botresults( $data );
+			}
 		}
 		// If not started and they have access to vote.
 		elseif ( ! $started && $has_access ) {
@@ -294,22 +304,6 @@ function pm_get_outcome_box( $data ) {
 				$html .= $selected;
 			}
 		$html .= '</div>';
-	$html .= '</div>';
-
-	// Bot results.
-	// TODO: Checkmark for correct, x for incorrect, dash for push.
-	$map = [
-		1  => ' win',
-		-1 => ' loss',
-		2  => ' push',
-	];
-
-	$h2h   = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : '';
-	$ats   = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : '';
-	$html .= '<div class="pm-adminoutcome">';
-		$html .= sprintf( '<p class="pm-adminoutcome__heading">%s:</p>', __( 'Bot Results (admins)', 'promatchups' ) );
-		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $h2h, __( 'H2H', 'promatchups' ) );
-		$html .= sprintf( '<p class="pm-adminoutcome__result%s">%s</p>', $ats, __( 'ATS', 'promatchups' ) );
 	$html .= '</div>';
 
 	return $html;

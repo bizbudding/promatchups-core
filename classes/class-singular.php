@@ -782,7 +782,7 @@ class ProMatchups_Singular {
 		}
 
 		// Heading.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="sources" ' : '', __( 'Latest News by AskNews.app', 'promatchups' ) );
+		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="sources" ' : '', __( 'Latest News', 'promatchups' ) );
 
 		// Start the list.
 		echo '<ul class="pm-sources">';

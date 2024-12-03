@@ -205,7 +205,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	$probability      = $probability ? $probability . '%' : '';
 	$likelihood       = $data['likelihood'];
 	$spread_covered   = $data['spread_covered'];
-	$predicted_score  = $data['predicted_score'] ? implode( '-', (array) $data['predicted_score'] ) : '';
+	// $predicted_score  = $data['predicted_score'] ? implode( '-', (array) $data['predicted_score'] ) : '';
 
 	// If prediction.
 	if ( $prediction_short ) {
@@ -243,15 +243,15 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 		];
 	}
 
-	// If predicted score.
-	if ( $predicted_score ) {
-		if ( current_user_can( 'manage_options' ) ) {
-			$list['score'] = [
-				'hidden'  => sprintf( 'Score (admins): %s', $predicted_score ),
-				'visible' => sprintf( 'Score (admins): %s', $predicted_score ),
-			];
-		}
-	}
+	// // If predicted score.
+	// if ( $predicted_score ) {
+	// 	if ( current_user_can( 'manage_options' ) ) {
+	// 		$list['score'] = [
+	// 			'hidden'  => sprintf( 'Score (admins): %s', $predicted_score ),
+	// 			'visible' => sprintf( 'Score (admins): %s', $predicted_score ),
+	// 		];
+	// 	}
+	// }
 
 	// Bail if no data.
 	if ( ! array_filter( $list ) ) {
@@ -270,6 +270,39 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 			$html .= sprintf( '<li class="pm-prediction__item %s">%s</li>', $class, $value );
 		}
 	$html .= '</ul>';
+
+	return $html;
+}
+
+/**
+ * Get the bot results.
+ *
+ * @since TBD
+ *
+ * @param array $data The matchup data.
+ *
+ * @return string
+ */
+function pm_get_botresults( $data ) {
+	// Bot results.
+	$map = [
+		-1 => ' loss',
+		1  => ' win',
+		2  => ' push',
+	];
+
+	// Get the results.
+	$h2h = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : '';
+	$ats = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : '';
+
+	// Build HTML.
+	$html  = '';
+	$html .= '<div class="pm-botresults">';
+		$html .= sprintf( '<p class="pm-botresults__heading">%s</p>', __( 'Bot Results', 'promatchups' ) );
+		$html .= '<span class="pm-botresults__sep">&ndash;</span>';
+		$html .= sprintf( '<p class="pm-botresults__result%s">%s</p>', $h2h, __( 'H2H', 'promatchups' ) );
+		$html .= sprintf( '<p class="pm-botresults__result%s">%s</p>', $ats, __( 'ATS', 'promatchups' ) );
+	$html .= '</div>';
 
 	return $html;
 }

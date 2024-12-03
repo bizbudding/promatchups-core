@@ -518,10 +518,8 @@ class ProMatchups_Singular {
 				echo '</div>';
 			echo '</div>';
 
-
-
 			// If first.
-			if ( $first ) {
+			if ( ! $hidden && $first ) {
 
 				// Prediction note.
 				printf( '<p class="has-sm-font-size"><em>%s</em></p>', __( 'SportsDesk Bot predictions are posted as early as possible to help you take advantage of early odds or spreads. Our final forecast is published on the site one hour before the match begins.', 'promatchups' ) );

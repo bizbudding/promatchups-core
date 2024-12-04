@@ -215,6 +215,9 @@ function pm_get_singular_vote_box() {
 
 	$html .= '</div>';
 
+	// Add tracking attributes.
+	$html = pm_add_matomo_attributes( $html, 'single-matchup-vote-box' );
+
 	return $html;
 }
 

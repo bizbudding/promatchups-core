@@ -146,6 +146,23 @@ function pm_get_file_url( $filename, $type, $debug = null ) {
 }
 
 /**
+ * Adds Matomo element attributes.
+ *
+ * @since 1.0.0
+ *
+ * @uses Mai Publisher
+ * @see  `maipub_add_attributes()`
+ *
+ * @param string $content The content.
+ * @param string $name    The name.
+ *
+ * @return string
+ */
+function pm_add_matomo_attributes( $content, $name ) {
+	return function_exists( 'maipub_add_attributes' ) ? maipub_add_attributes( $content, $name ) : $content;
+}
+
+/**
  * Prevent post_modified update.
  *
  * @since 0.1.0

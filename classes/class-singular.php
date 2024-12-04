@@ -501,28 +501,30 @@ class ProMatchups_Singular {
 	 * @return void
 	 */
 	function do_prediction( $hidden = false, $first = true ) {
+		$html = '';
+
 		// Display the prediction.
-		printf( '<div %sclass="pm-prediction">', $first ? 'id="prediction" ' : '' );
+		$html .= sprintf( '<div %sclass="pm-prediction">', $first ? 'id="prediction" ' : '' );
 			// Display the header.
-			echo '<div class="pm-prediction__header">';
+			$html .= '<div class="pm-prediction__header">';
 				// Get image.
 				$image = (string) wp_get_attachment_image( 9592, 'medium', false, [ 'class' => 'pm-prediction__img' ] );
 
 				// Display the image. No conditions, always show, even if empty because of CSS grid.
-				printf( '<div class="pm-prediction__image">%s</div>', $image );
+				$html .= sprintf( '<div class="pm-prediction__image">%s</div>', $image );
 
 				// Display the heading and prediction list.
-				echo '<div class="pm-prediction__bubble">';
-					printf( '<h2>%s</h2>', __( 'My Prediction', 'promatchups' ) );
-					echo pm_get_prediction_list( $this->data, $hidden );
-				echo '</div>';
-			echo '</div>';
+				$html .= '<div class="pm-prediction__bubble">';
+					$html .= sprintf( '<h2>%s</h2>', __( 'My Prediction', 'promatchups' ) );
+					$html .= pm_get_prediction_list( $this->data, $hidden );
+				$html .= '</div>';
+			$html .= '</div>';
 
 			// If first.
 			if ( ! $hidden && $first ) {
 
 				// Prediction note.
-				printf( '<p class="has-sm-font-size"><em>%s</em></p>', __( 'SportsDesk Bot predictions are posted as early as possible to help you take advantage of early odds or spreads. Our final forecast is published on the site one hour before the match begins.', 'promatchups' ) );
+				$html .= sprintf( '<p class="has-sm-font-size"><em>%s</em></p>', __( 'SportsDesk Bot predictions are posted as early as possible to help you take advantage of early odds or spreads. Our final forecast is published on the site one hour before the match begins.', 'promatchups' ) );
 
 				// Build teams array.
 				$teams = array_filter( [
@@ -624,7 +626,6 @@ class ProMatchups_Singular {
 
 						// If we have a table.
 						if ( $table ) {
-							$html  = '';
 							$html .= '<div class="pm-previousresults">';
 								// Heading.
 								$html .= sprintf( '<p class="pm-previousresults__heading is-style-heading">%s %s %s</p>', __( 'Previous', 'promatchups' ), pm_get_team_short_name( $team, $this->data['league'] ), __( 'Predictions', 'promatchups' ) );
@@ -663,9 +664,6 @@ class ProMatchups_Singular {
 									$html .= '</tbody>';
 								$html .= '</table>';
 							$html .= '</div>';
-
-							// Display the table.
-							echo $html;
 						}
 					}
 				}
@@ -702,7 +700,7 @@ class ProMatchups_Singular {
 			];
 
 			// Display the inner content.
-			printf( '<div class="pm-prediction__inner%s">', $hidden ? ' pm-prediction__inner--obfuscated' : '' );
+			$html .= sprintf( '<div class="pm-prediction__inner%s">', $hidden ? ' pm-prediction__inner--obfuscated' : '' );
 				// Loop through and display the key body.
 				foreach ( $keys as $key => $value ) {
 					$content = $hidden ? $value['hidden'] : $this->content[ $key ];
@@ -711,20 +709,19 @@ class ProMatchups_Singular {
 						continue;
 					}
 
-					$heading = $value['label'] ? sprintf( '<strong>%s:</strong> ', $value['label'] ) : '';
-
-					printf( '<p>%s%s</p>', $heading, $content );
+					$heading  = $value['label'] ? sprintf( '<strong>%s:</strong> ', $value['label'] ) : '';
+					$html    .= sprintf( '<p>%s%s</p>', $heading, $content );
 				}
 
 				// If hidden, show CTA.
 				if ( $hidden ) {
-					echo '<div class="pm-prediction__cta">';
-						echo '<div class="pm-prediction__cta-inner">';
-							printf( '<h3>%s</h3>', __( 'Advanced Insights', 'promatchups' ) );
-							printf( '<p>%s</p>', __( 'Advanced insights and predictions available to members.', 'promatchups' ) );
-							printf( '<a class="button" href="%s">%s</a>', get_permalink( 41 ), __( 'Get Access', 'promatchups' ) );
-						echo '</div>';
-					echo '</div>';
+					$html .= '<div class="pm-prediction__cta">';
+						$html .= '<div class="pm-prediction__cta-inner">';
+							$html .= sprintf( '<h3>%s</h3>', __( 'Advanced Insights', 'promatchups' ) );
+							$html .= sprintf( '<p>%s</p>', __( 'Advanced insights and predictions available to members.', 'promatchups' ) );
+							$html .= sprintf( '<a class="button" href="%s">%s</a>', get_permalink( 41 ), __( 'Get Access', 'promatchups' ) );
+						$html .= '</div>';
+					$html .= '</div>';
 
 				}
 				// Show stat, fantasy tip, and odds.
@@ -734,9 +731,8 @@ class ProMatchups_Singular {
 
 					// Display the interesting stat.
 					if ( $stat ) {
-						$heading = sprintf( '<strong>%s:</strong> ', __( 'Interesting Statistic', 'promatchups' ) );
-
-						printf( '<p>%s%s</p>', $heading, $stat );
+						$heading  = sprintf( '<strong>%s:</strong> ', __( 'Interesting Statistic', 'promatchups' ) );
+						$html    .= sprintf( '<p>%s%s</p>', $heading, $stat );
 					}
 
 					// Get the spread insights.
@@ -744,8 +740,8 @@ class ProMatchups_Singular {
 
 					// Display the spread insights.
 					if ( $spread_insights ) {
-						printf( '<h3>%s</h3>', __( 'Spread Insights', 'promatchups' ) );
-						echo implode( '', $spread_insights );
+						$html .= sprintf( '<h3>%s</h3>', __( 'Spread Insights', 'promatchups' ) );
+						$html .= implode( '', $spread_insights );
 					}
 
 					// Get the takeaways.
@@ -753,12 +749,12 @@ class ProMatchups_Singular {
 
 					// Display the takeaways.
 					if ( $takeaways ) {
-						printf( '<h3 class="has-lg-margin-top">%s</h3>', __( 'Key Takeaways', 'promatchups' ) );
-						echo '<ul>';
+						$html .= sprintf( '<h3 class="has-lg-margin-top">%s</h3>', __( 'Key Takeaways', 'promatchups' ) );
+						$html .= '<ul>';
 							foreach ( (array) $takeaways as $takeaway ) {
-								printf( '<li>%s</li>', $takeaway );
+								$html .= sprintf( '<li>%s</li>', $takeaway );
 							}
-						echo '</ul>';
+						$html .= '</ul>';
 					}
 
 					// Get the fantasy tip.
@@ -766,8 +762,8 @@ class ProMatchups_Singular {
 
 					// Display the fantasy tip.
 					if ( $fantasy ) {
-						$heading = sprintf( '<h3 class="has-xxxs-margin-bottom">%s!</h3> ', __( 'Fantasy Tip', 'promatchups' ) );
-						printf( '<div class="pm-prediction__fantasy">%s%s</div>', $heading, wpautop( $fantasy, false ) );
+						$heading  = sprintf( '<h3 class="has-xxxs-margin-bottom">%s!</h3> ', __( 'Fantasy Tip', 'promatchups' ) );
+						$html    .= sprintf( '<div class="pm-prediction__fantasy">%s%s</div>', $heading, wpautop( $fantasy, false ) );
 					}
 
 					// Get odds/spread tables.
@@ -776,17 +772,23 @@ class ProMatchups_Singular {
 
 					// Display the odds.
 					if ( $odds ) {
-						echo $odds;
+						$html .= $odds;
 					}
 
 					// Display the spreads.
 					if ( $spreads ) {
-						echo $spreads;
+						$html .= $spreads;
 					}
 				}
 
-			echo '</div>';
-		echo '</div>';
+			$html .= '</div>';
+		$html .= '</div>';
+
+		// Add tracking attributes.
+		$html = $first ? pm_add_matomo_attributes( $html, 'single-matchup-prediction' ) : $html;
+
+		// Display the prediction.
+		echo $html;
 	}
 
 	/**
@@ -805,10 +807,15 @@ class ProMatchups_Singular {
 			return;
 		}
 
-		// Start markup.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="people" ' : '', __( 'Key People', 'promatchups' ) );
+		// Add heading.
+		$heading = sprintf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="people" ' : '', __( 'Key People', 'promatchups' ) );
+		$heading = pm_add_matomo_attributes( $heading, 'single-matchup-people' );
+		echo $heading;
+
+		// Description.
 		printf( '<p>%s</p>', __( 'Key people highlighted in this matchup. Click to follow.', 'promatchups' ) );
 
+		// Display the people.
 		echo '<ul class="pm-people">';
 
 		// Loop through people.
@@ -882,7 +889,10 @@ class ProMatchups_Singular {
 		}
 
 		// Heading and desc.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="injuries" ' : '', __( 'Injuries', 'promatchups' ) );
+		$heading = sprintf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="injuries" ' : '', __( 'Injuries', 'promatchups' ) );
+		$heading = pm_add_matomo_attributes( $heading, 'single-matchup-injuries' );
+		echo $heading;
+
 		printf( '<p>%s</p>', __( 'Injuries that may affect the outcome of this matchup.', 'promatchups' ) );
 
 		echo '<ul class="pm-injuries">';
@@ -909,7 +919,9 @@ class ProMatchups_Singular {
 		}
 
 		// Heading and desc.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="timeline" ' : '', __( 'Timeline', 'promatchups' ) );
+		$heading = sprintf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="timeline" ' : '', __( 'Timeline', 'promatchups' ) );
+		$heading = pm_add_matomo_attributes( $heading, 'single-matchup-timeline' );
+		echo $heading;
 		printf( '<p>%s</p>', __( 'Timeline of relevant events and news articles.', 'promatchups' ) );
 
 		echo '<ul>';
@@ -936,7 +948,9 @@ class ProMatchups_Singular {
 		}
 
 		// Heading.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="sources" ' : '', __( 'Latest News', 'promatchups' ) );
+		$heading = sprintf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="sources" ' : '', __( 'Latest News', 'promatchups' ) );
+		$heading = pm_add_matomo_attributes( $heading, 'single-matchup-sources' );
+		echo $heading;
 
 		// Start the list.
 		echo '<ul class="pm-sources">';
@@ -1004,7 +1018,9 @@ class ProMatchups_Singular {
 		// For subscription, show the last 2 weeks?
 
 		// Heading.
-		printf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="web" ' : '', __( 'Around the Web', 'promatchups' ) );
+		$heading = sprintf( '<h2 %sclass="is-style-heading">%s</h2>', $first ? 'id="web" ' : '', __( 'Around the Web', 'promatchups' ) );
+		$heading = pm_add_matomo_attributes( $heading, 'single-matchup-web' );
+		echo $heading;
 
 		// Start the list.
 		echo '<ul class="pm-results">';

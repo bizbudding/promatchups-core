@@ -57,7 +57,7 @@ class ProMatchups_Mai_Publisher {
 		$locations['in_web_results'] = [
 			'hook'          => 'pm_after_web_result',
 			'content_count' => '3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60',
-			'open'          => '<li class="pm-result">',
+			'open'          => '<li class="pm-web">',
 			'close'         => '</li>',
 			'priority'      => 10,
 			'target'        => 'bf',

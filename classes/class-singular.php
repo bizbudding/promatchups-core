@@ -245,7 +245,7 @@ class ProMatchups_Singular {
 		do_action( 'pm_promo_cca2', $this->data, $first );
 
 		$this->do_sources( $first ); // displayed on the site as Latest News
-		$this->do_search_results( $first );
+		$this->do_web( $first );
 	}
 
 	/**
@@ -954,6 +954,9 @@ class ProMatchups_Singular {
 
 		// Start the list.
 		echo '<ul class="pm-sources">';
+			// // Start counter.
+			// $i = 1;
+
 			// Loop through sources.
 			foreach ( $sources as $source ) {
 				// Build list item.
@@ -993,6 +996,20 @@ class ProMatchups_Singular {
 
 				// Add hook.
 				do_action( 'pm_after_source', $source );
+
+				// // If after the right number of results, add a show all checkbox.
+				// if ( 5 === $i ) {
+				// 	// Add a checkbox to expand/collapse more items.
+				// 	echo '<li class="pm-source pm-source--more has-text-align-center">';
+				// 		echo '<label class="pm-source__more button button-secondary">';
+				// 			echo __( 'Show More Sources', 'promatchups' );
+				// 			echo '<input class="pm-more__input" name="pm-more__input" type="checkbox" />';
+				// 		echo '</label>';
+				// 	echo '</li>';
+				// }
+
+				// // Increment counter.
+				// $i++;
 			}
 		echo '</ul>';
 	}
@@ -1006,7 +1023,7 @@ class ProMatchups_Singular {
 	 *
 	 * @return void
 	 */
-	function do_search_results( $first ) {
+	function do_web( $first ) {
 		$results = $this->content['search_results'];
 
 		if ( ! $results ) {
@@ -1023,7 +1040,10 @@ class ProMatchups_Singular {
 		echo $heading;
 
 		// Start the list.
-		echo '<ul class="pm-results">';
+		echo '<ul class="pm-webs">';
+			// // Start counter.
+			// $i = 1;
+
 			// Loop through search results.
 			foreach ( $results as $result ) {
 				// Skip if no points.
@@ -1032,14 +1052,14 @@ class ProMatchups_Singular {
 				}
 
 				// Build list item.
-				echo '<li class="pm-result">';
+				echo '<li class="pm-web">';
 					// Title.
-					echo '<h3 class="entry-title pm-result__title">';
+					echo '<h3 class="entry-title pm-web__title">';
 						echo $result['title'];
 					echo '</h3>';
 
 					// Meta.
-					echo '<div class="pm-result__meta">';
+					echo '<div class="pm-web__meta">';
 						echo $result['meta'];
 					echo '</div>';
 
@@ -1053,6 +1073,20 @@ class ProMatchups_Singular {
 
 				// Add hook.
 				do_action( 'pm_after_web_result', $result );
+
+				// // If after the right number of results, add a show all checkbox.
+				// if ( 5 === $i ) {
+				// 	// Add a checkbox to expand/collapse more items.
+				// 	echo '<li class="pm-web pm-web--more has-text-align-center">';
+				// 		echo '<label class="pm-web__more button button-secondary">';
+				// 			echo __( 'Show More Web Results', 'promatchups' );
+				// 			echo '<input class="pm-more__input" name="pm-more__input" type="checkbox" />';
+				// 		echo '</label>';
+				// 	echo '</li>';
+				// }
+
+				// // Increment counter.
+				// $i++;
 			}
 		echo '</ul>';
 	}

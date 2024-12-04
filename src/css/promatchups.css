@@ -1519,6 +1519,25 @@ body {
 	--toggle-bg: var(--color-success);
 }
 
+.pm-source--more:has(.pm-more__input:checked),
+.pm-web--more:has(.pm-more__input:checked) {
+	display: none;
+}
+
+.pm-source--more:has(.pm-more__input:not(:checked)) ~ .pm-source,
+.pm-web--more:has(.pm-more__input:not(:checked)) ~ .pm-web {
+	display: none;
+}
+
+.pm-more__input {
+	position: absolute !important;
+	clip: rect(0, 0, 0, 0);
+	height: 1px;
+	width: 1px;
+	border: 0;
+	overflow: hidden;
+}
+
 .pm-spreads__th {
 	display: flex;
 	gap: .5em;
@@ -1540,7 +1559,7 @@ body {
 	padding-left: var(--spacing-xxs);
 }
 
-.pm-results {
+.pm-webs {
 	--heading-margin-bottom: var(--spacing-xs);
 	--entry-title-font-size: var(--font-size-lg);
 	display: grid;
@@ -1549,11 +1568,11 @@ body {
 	margin: 0;
 }
 
-.pm-result {
+.pm-web {
 	margin: 0;
 }
 
-.pm-result__meta {
+.pm-web__meta {
 	--link-color: var(--color-body);
 	margin-bottom: var(--spacing-xxxs);
 	font-size: var(--font-size-sm);

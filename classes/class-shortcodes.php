@@ -61,7 +61,305 @@ class ProMatchups_Shortcodes {
 		// Get user votes.
 		$comments = get_comments(
 			[
-				'type'    => [ 'pm_vote' ],
+				'type'    => [ 'pm_vote', 'pm_spread' ],
+				'status'  => 'approve',
+				'user_id' => $user_id,
+				'number'  => 500, // This is hardcoded in the table filters too.
+				// 'orderby' => 'comment_date',
+				// 'order'   => 'ASC',
+			]
+		);
+
+		// Loop through comments and build an array of date, result (karma), league, and probability.
+		foreach ( $comments as $comment ) {
+			// Skip if karma is 0.
+			if ( 0 === (int) $comment->comment_karma ) {
+				continue;
+			}
+
+			// Result.
+			switch ( (int) $comment->comment_karma ) {
+				case 1:
+					$result = __( 'Win', 'promatchups' );
+				break;
+				case -1:
+					$result = __( 'Loss', 'promatchups' );
+				break;
+				case 2:
+					$result = __( 'Tie', 'promatchups' );
+				break;
+				default:
+					$result = '';
+			}
+
+			// Format type.
+			$type = $comment->comment_type;
+			$type = str_replace( 'pm_', '', $type );
+			$type = ucwords( $type );
+
+			// Add to array.
+			$array[] = [
+				'date'        => date( 'Y-m-d', strtotime( $comment->comment_date ) ),
+				'title'       => get_the_title( $comment->comment_post_ID ),
+				'league'      => $comment->comment_agent,
+				'result'      => $result,
+				'probability' => $comment->comment_parent,
+				'type'        => $type,
+			];
+		}
+
+		// Start table wrap.
+		$html .= '<div class="has-xl-margin-bottom">';
+			// Custom CSS.
+			ob_start();
+			?>
+			<style>
+			.dt-search {
+				display: none;
+			}
+			.pages-row {
+				position: sticky;
+				bottom: 0;
+				display: flex;
+				justify-content: space-between;
+				gap: 1em;
+				background: var(--color-alt);
+				padding: 24px;
+				border-top: var(--border);
+			}
+			#vote-stats_info {
+				margin-bottom: 12px;
+				font-size: var(--font-size-sm);
+				text-align: center;
+			}
+			</style>
+			<?php
+			$html .= ob_get_clean();
+
+			// Date/Pagination.
+			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
+				$html .= '<div style="flex:1;">';
+					$html .= '<label for="date-filter">Date Range:</label>';
+					$html .= '<div style="display:flex;gap:.5em;">';
+						$html .= '<input type="date" id="min-date" data-column="0" placeholder="Start Date">';
+						$html .= '<input type="date" id="max-date" data-column="0" placeholder="End Date">';
+					$html .= '</div>';
+				$html .= '</div>';
+			$html .= '</div>';
+
+			// Filters
+			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
+				$html .= '<div style="flex:1;">';
+					$html .= '<label for="global-search">Search:</label>';
+					$html .= '<input type="text" id="global-search" placeholder="Search all columns">';
+				$html .= '</div>';
+				$html .= '<div>';
+					$html .= '<label for="league-filter">League:</label>';
+					$html .= '<select style="min-height:48px;" id="league-filter">';
+						$html .= '<option value="">All</option>';
+						$html .= '<option value="NFL">NFL</option>';
+						$html .= '<option value="NBA">NBA</option>';
+						$html .= '<option value="MLB">MLB</option>';
+					$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<div>';
+					$html .= '<label for="result-filter">Result:</label>';
+					$html .= '<select style="min-height:48px;" id="result-filter">';
+						$html .= '<option value="">All</option>';
+						$html .= '<option value="Win">Win</option>';
+						$html .= '<option value="Loss">Loss</option>';
+						$html .= '<option value="Tie">Tie</option>';
+					$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<div>';
+					$html .= '<label for="type-filter">Type:</label>';
+					$html .= '<select style="min-height:48px;" id="type-filter">';
+						$html .= '<option value="">All</option>';
+						$html .= '<option value="Vote">Vote</option>';
+						$html .= '<option value="Spread">Spread</option>';
+					$html .= '</select>';
+				$html .= '</div>';
+			$html .= '</div>';
+
+			// Win percentage.
+			$html .= '<p id="win-percentage-section" class="has-background has-alt-background-color" style="display:flex;justify-content:center;gap:.25em;">';
+				$html .= '<label class="has-no-margin-bottom">Win Percentage:</label>';
+				$html .= '<span id="win-percentage">Calculating...</span>';
+			$html .= '</p>';
+
+			// Build table.
+			$html .= '<table id="vote-stats">';
+				$html .= '<thead>';
+					$html .= '<tr>';
+						$html .= sprintf( '<th>%s</th>', __( 'Date', 'promatchups' ) );
+						$html .= sprintf( '<th>%s</th>', __( 'Matchup', 'promatchups' ) );
+						$html .= sprintf( '<th>%s</th>', __( 'League', 'promatchups' ) );
+						$html .= sprintf( '<th>%s</th>', __( 'Probability', 'promatchups' ) );
+						$html .= sprintf( '<th>%s</th>', __( 'Result', 'promatchups' ) );
+						$html .= sprintf( '<th>%s</th>', __( 'Type', 'promatchups' ) );
+					$html .= '</tr>';
+				$html .= '</thead>';
+				$html .= '<tfoot>';
+					$html .= '<tr>';
+						$html .= '<th></th>';
+						$html .= '<th></th>';
+						$html .= '<th></th>';
+						$html .= '<th></th>';
+						$html .= '<th></th>';
+						$html .= '<th></th>';
+					$html .= '</tr>';
+				$html .= '</tfoot>';
+				$html .= '<tbody></tbody>';
+			$html .= '</table>';
+		$html .= '</div>';
+
+		// Convert to JSON.
+		$json_data = wp_json_encode( $array );
+
+		// Add the DataTables initialization script.
+		add_action( 'wp_footer', function() use ( $json_data ) {
+			?>
+			<script>
+			jQuery(document).ready(function($) {
+				var data = <?php echo $json_data; ?>;
+
+				// Initialize DataTable.
+				var table = $('#vote-stats').DataTable({
+					data: data,
+					columns: [
+						{ data: 'date', title: 'Date' },
+						{ data: 'title', title: 'Matchup' },
+						{ data: 'league', title: 'League' },
+						{ data: 'probability', title: 'Probability' },
+						{ data: 'result', title: 'Result' },
+						{ data: 'type', title: 'Type' }
+					],
+					order: [[0, 'desc']],
+					pageLength: 50,
+					paging: true,
+					ordering: true,
+					searching: true, // Needed for filters too.
+					info: true,
+					pageLength: 50,
+					lengthMenu: [
+						[25, 50, 100, 150, 200, -1], // Values.
+						['25 rows', '50 rows', '100 rows', '150 rows', '200 rows', '500 rows' ], // Display labels.
+					],
+					dom: '<"top"i>rt<"bottom pages-row"lp><"clear">', // Add entries-per-page (l) to the bottom with pagination (p)
+					language: {
+					lengthMenu: '<select>' + // Only the dropdown without text
+						'<option value="10">10</option>' +
+						'<option value="25">25</option>' +
+						'<option value="50">50</option>' +
+						'<option value="100">100</option>' +
+						'<option value="200">200</option>' +
+						'<option value="-1">All</option>' +
+						'</select>'
+					},
+				});
+
+				// Function to calculate and display win percentage.
+				function updateWinPercentage() {
+					// Get filtered rows
+					var filteredData = table.rows({ filter: 'applied' }).data();
+
+					// Count total rows and wins
+					var totalRows = filteredData.length;
+					var winCount = 0;
+
+					filteredData.each(function(row) {
+						if (row.result === 'Win') {
+							winCount++;
+						}
+					});
+
+					// Calculate win percentage
+					var winPercentage = totalRows > 0 ? (winCount / totalRows) * 100 : 0;
+
+					// Update the display
+					$('#win-percentage').text(`${winPercentage.toFixed(2)}%`);
+				}
+
+				// Update win percentage on every table draw (e.g., search, filter, paginate).
+				table.on('draw', updateWinPercentage);
+
+				// Initial calculation
+				updateWinPercentage();
+
+				// Date range filtering.
+				$('#min-date, #max-date').on('change', function() {
+					var min = $('#min-date').val();
+					var max = $('#max-date').val();
+					$.fn.dataTable.ext.search.push(function(settings, data) {
+						var date = data[0]; // Date column value
+						if ((min === '' || date >= min) && (max === '' || date <= max)) {
+							return true;
+						}
+						return false;
+					});
+					table.draw();
+				});
+
+				// Global search bar.
+				$('#global-search').on('keyup', function() {
+					table.search(this.value).draw();
+				});
+
+				// Column-specific filters.
+				$('#league-filter').on('change', function() {
+					var value = $(this).val();
+					table.column(2).search(value).draw(); // League is column index 2
+				});
+
+				$('#result-filter').on('change', function() {
+					var value = $(this).val();
+					table.column(4).search(value).draw(); // Result is column index 4
+				});
+
+				$('#type-filter').on('change', function() {
+					var value = $(this).val();
+					table.column(5).search(value).draw(); // Type is column index 5
+				});
+			});
+			</script>
+			<?php
+		});
+
+		return $html;
+	}
+
+	function get_datatable_og( $atts ) {
+		$html = '';
+
+		// Parse atts.
+		$atts = shortcode_atts([
+			'user_id'  => get_current_user_id(),
+		], $atts, 'pm_user_stats' );
+
+		// Sanitize.
+		$user_id = absint( $atts['user_id'] );
+		$user    = get_user_by( 'ID', $user_id );
+
+		// Bail if no user.
+		if ( ! $user ) {
+			return $html;
+		}
+
+		// wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css', [], '2.1.8' );
+		// wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/2.1.8/js/dataTables.min.js', [ 'jquery' ], '2.1.8', true );
+		wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css', [], '2.1.8' );
+		wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/2.1.8/js/dataTables.js', [ 'jquery' ], '2.1.8', true );
+
+		wp_enqueue_style( 'datatables-buttons', 'https://cdn.datatables.net/buttons/3.1.2/css/buttons.dataTables.min.css', [], '3.1.2' );
+		wp_enqueue_script( 'datatables-buttons', 'https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.min.js', [ 'datatables', 'jquery' ], '3.1.2', true );
+
+		// Start the data array for DataTables.
+		$array = [];
+
+		// Get user votes.
+		$comments = get_comments(
+			[
+				'type'    => [ 'pm_vote', 'pm_spread' ],
 				'status'  => 'approve',
 				'user_id' => $user_id,
 				// 'orderby' => 'comment_date',
@@ -100,7 +398,7 @@ class ProMatchups_Shortcodes {
 			];
 		}
 
-		// / Convert to JSON.
+		// Convert to JSON.
 		$json_data = wp_json_encode( $array );
 
 		// Build table.
@@ -184,47 +482,13 @@ class ProMatchups_Shortcodes {
 				});
 
 				// Hide all rows in the table body with CSS
-				$('#vote-stats tbody').hide();
+				// $('#vote-stats tbody').hide();
 			});
 			</script>
 			<?php
 		});
 
 		return $html;
-
-		// $array['total_votes']  = get_user_meta( $user_id, 'total_votes', true );
-		// $array['total_wins']   = get_user_meta( $user_id, 'total_wins', true );
-		// $array['total_losses'] = get_user_meta( $user_id, 'total_losses', true );
-		// $array['total_ties']   = get_user_meta( $user_id, 'total_ties', true );
-		// $array['win_percent']  = get_user_meta( $user_id, 'win_percent', true );
-
-		// // Leagues.
-		// $leagues = [ 'mlb', 'nba', 'nfl', 'nhl' ];
-
-		// // Loop through leagues.
-		// foreach ( $leagues as $league ) {
-		// 	$array["total_votes_{$league}"]  = get_user_meta( $user_id, "total_votes_{$league}", true );
-		// 	$array["total_wins_{$league}"]   = get_user_meta( $user_id, "total_wins_{$league}", true );
-		// 	$array["total_losses_{$league}"] = get_user_meta( $user_id, "total_losses_{$league}", true );
-		// 	$array["total_ties_{$league}"]   = get_user_meta( $user_id, "total_ties_{$league}", true );
-		// 	$array["win_percent_{$league}"]  = get_user_meta( $user_id, "win_percent_{$league}", true );
-		// }
-
-		// $html .= '<div>';
-		// 	$html .= '<table id="vote-stats" class="display" style="width:100%">';
-		// 		$html .= '<thead>';
-		// 			$html .= '<tr>';
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Total Votes', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Wins', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Losses', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Ties', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Win %', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'League', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Day', 'promatchups' ) );
-		// 				$html .= sprintf( '<th>%s</th>', __( 'Week', 'promatchups' ) );
-		// 			$html .= '</tr>';
-		// 		$html .= '</thead>';
-		// 	$html .= '</table>';
 		// $html .= '</div>';
 	}
 

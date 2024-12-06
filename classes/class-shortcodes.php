@@ -235,25 +235,20 @@ class ProMatchups_Shortcodes {
 						{ data: 'type', title: 'Type' }
 					],
 					order: [[0, 'desc']],
-					pageLength: 50,
 					paging: true,
 					ordering: true,
 					searching: true, // Needed for filters too.
 					info: true,
-					pageLength: 50,
-					lengthMenu: [
-						[25, 50, 100, 150, 200, -1], // Values.
-						['25 rows', '50 rows', '100 rows', '150 rows', '200 rows', '500 rows' ], // Display labels.
-					],
+					pageLength: 500,
 					dom: '<"top"i>rt<"bottom pages-row"lp><"clear">', // Add entries-per-page (l) to the bottom with pagination (p)
 					language: {
-					lengthMenu: '<select>' + // Only the dropdown without text
-						'<option value="10">10</option>' +
-						'<option value="25">25</option>' +
-						'<option value="50">50</option>' +
-						'<option value="100">100</option>' +
-						'<option value="200">200</option>' +
-						'<option value="-1">All</option>' +
+					lengthMenu: '<select>' + // Only the dropdown without text.
+						'<option value="10">10 rows</option>' +
+						'<option value="25">25 rows</option>' +
+						'<option value="50">50 rows</option>' +
+						'<option value="100">100 rows</option>' +
+						'<option value="200">200 rows</option>' +
+						'<option value="500">500 (max query)</option>' +
 						'</select>'
 					},
 				});

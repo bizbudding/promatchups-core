@@ -100,7 +100,7 @@ class ProMatchups_Shortcodes {
 			// Add to array.
 			$array[] = [
 				'date'        => date( 'Y-m-d', strtotime( $comment->comment_date ) ),
-				'title'       => get_the_title( $comment->comment_post_ID ),
+				'title'       => sprintf( '<a class="entry-title-link" href="%s">%s</a>',  get_permalink( $comment->comment_post_ID ), get_the_title( $comment->comment_post_ID ) ),
 				'league'      => $comment->comment_agent,
 				'result'      => $result,
 				'probability' => $comment->comment_parent,
@@ -109,7 +109,7 @@ class ProMatchups_Shortcodes {
 		}
 
 		// Start table wrap.
-		$html .= '<div class="has-xl-margin-bottom">';
+		$html .= '<div class="has-xl-margin-bottom has-sm-font-size">';
 			// Custom CSS.
 			ob_start();
 			?>
@@ -194,7 +194,7 @@ class ProMatchups_Shortcodes {
 						$html .= sprintf( '<th>%s</th>', __( 'Date', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'Matchup', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'League', 'promatchups' ) );
-						$html .= sprintf( '<th>%s</th>', __( 'Probability', 'promatchups' ) );
+						// $html .= sprintf( '<th>%s</th>', __( 'Probability', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'Result', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'Type', 'promatchups' ) );
 					$html .= '</tr>';
@@ -204,7 +204,7 @@ class ProMatchups_Shortcodes {
 						$html .= '<th></th>';
 						$html .= '<th></th>';
 						$html .= '<th></th>';
-						$html .= '<th></th>';
+						// $html .= '<th></th>';
 						$html .= '<th></th>';
 						$html .= '<th></th>';
 					$html .= '</tr>';
@@ -230,7 +230,7 @@ class ProMatchups_Shortcodes {
 						{ data: 'date', title: 'Date' },
 						{ data: 'title', title: 'Matchup' },
 						{ data: 'league', title: 'League' },
-						{ data: 'probability', title: 'Probability' },
+						// { data: 'probability', title: 'Probability' },
 						{ data: 'result', title: 'Result' },
 						{ data: 'type', title: 'Type' }
 					],

@@ -136,18 +136,7 @@ class ProMatchups_Shortcodes {
 			<?php
 			$html .= ob_get_clean();
 
-			// Date/Pagination.
-			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
-				$html .= '<div style="flex:1;">';
-					$html .= '<label for="date-filter">Date Range:</label>';
-					$html .= '<div style="display:flex;gap:.5em;">';
-						$html .= '<input type="date" id="min-date" data-column="0" placeholder="Start Date">';
-						$html .= '<input type="date" id="max-date" data-column="0" placeholder="End Date">';
-					$html .= '</div>';
-				$html .= '</div>';
-			$html .= '</div>';
-
-			// Filters
+			// Filters.
 			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
 				$html .= '<div style="flex:1;">';
 					$html .= '<label for="global-search">Search:</label>';
@@ -178,6 +167,17 @@ class ProMatchups_Shortcodes {
 						$html .= '<option value="Vote">Vote</option>';
 						$html .= '<option value="Spread">Spread</option>';
 					$html .= '</select>';
+				$html .= '</div>';
+			$html .= '</div>';
+
+			// Date filter.
+			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
+				$html .= '<div style="flex:1;">';
+					$html .= '<label for="date-filter">Date Range:</label>';
+					$html .= '<div style="display:flex;gap:.5em;">';
+						$html .= '<input type="date" id="min-date" data-column="0" placeholder="Start Date">';
+						$html .= '<input type="date" id="max-date" data-column="0" placeholder="End Date">';
+					$html .= '</div>';
 				$html .= '</div>';
 			$html .= '</div>';
 

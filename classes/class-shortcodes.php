@@ -194,7 +194,7 @@ class ProMatchups_Shortcodes {
 						$html .= sprintf( '<th>%s</th>', __( 'Date', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'Matchup', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'League', 'promatchups' ) );
-						// $html .= sprintf( '<th>%s</th>', __( 'Probability', 'promatchups' ) );
+						$html .= sprintf( '<th>%s</th>', __( 'Probability', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'Result', 'promatchups' ) );
 						$html .= sprintf( '<th>%s</th>', __( 'Type', 'promatchups' ) );
 					$html .= '</tr>';
@@ -204,7 +204,7 @@ class ProMatchups_Shortcodes {
 						$html .= '<th></th>';
 						$html .= '<th></th>';
 						$html .= '<th></th>';
-						// $html .= '<th></th>';
+						$html .= '<th></th>';
 						$html .= '<th></th>';
 						$html .= '<th></th>';
 					$html .= '</tr>';
@@ -230,7 +230,7 @@ class ProMatchups_Shortcodes {
 						{ data: 'date', title: 'Date' },
 						{ data: 'title', title: 'Matchup' },
 						{ data: 'league', title: 'League' },
-						// { data: 'probability', title: 'Probability' },
+						{ data: 'probability', title: 'Probability' },
 						{ data: 'result', title: 'Result' },
 						{ data: 'type', title: 'Type' }
 					],

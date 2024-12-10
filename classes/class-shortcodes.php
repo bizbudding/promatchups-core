@@ -52,6 +52,9 @@ class ProMatchups_Shortcodes {
 		wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css', [], '2.1.8' );
 		wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/2.1.8/js/dataTables.js', [ 'jquery' ], '2.1.8', true );
 
+		// wp_enqueue_style( 'datatables-responsive', 'https://cdn.datatables.net/responsive/3.0.3/css/responsive.dataTables.min.css', [], '2.4.1' );
+		// wp_enqueue_script( 'datatables-responsive', 'https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js', [ 'datatables', 'jquery' ], '2.4.1', true );
+
 		wp_enqueue_style( 'datatables-buttons', 'https://cdn.datatables.net/buttons/3.1.2/css/buttons.dataTables.min.css', [], '3.1.2' );
 		wp_enqueue_script( 'datatables-buttons', 'https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.min.js', [ 'datatables', 'jquery' ], '3.1.2', true );
 
@@ -240,6 +243,7 @@ class ProMatchups_Shortcodes {
 					searching: true, // Needed for filters too.
 					info: true,
 					pageLength: 500,
+					// responsive: true,
 					dom: '<"top"i>rt<"bottom pages-row"lp><"clear">', // Add entries-per-page (l) to the bottom with pagination (p)
 					language: {
 					lengthMenu: '<select>' + // Only the dropdown without text.

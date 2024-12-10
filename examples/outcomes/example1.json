@@ -1,0 +1,11 @@
+{
+  "event_uuid": "06a40281-4a2a-4ff4-ba84-504abc72019b",
+  "winner": {
+    "team": "Dallas Cowboys",
+    "score": 27
+  },
+  "loser": {
+    "team": "New York Giants",
+    "score": 20
+  }
+}

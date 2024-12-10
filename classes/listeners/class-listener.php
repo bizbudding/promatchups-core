@@ -36,7 +36,7 @@ class ProMatchups_Listener {
 	 * @return
 	 */
 	function get_error( $message, $code = null ) {
-		return new WP_Error( 'mai-asknews error', $message, [ 'status' => $code ] );
+		return new WP_Error( 'promatchups error', $message, [ 'status' => $code ] );
 	}
 
 	/**
@@ -143,7 +143,7 @@ class ProMatchups_Listener {
 		// If image contents.
 		if ( $image_contents ) {
 			// Specify the path to the destination directory within uploads.
-			$destination_dir = $upload_dir['basedir'] . '/mai-asknews/';
+			$destination_dir = $upload_dir['basedir'] . '/promatchups/';
 
 			// Create the destination directory if it doesn't exist.
 			if ( ! file_exists( $destination_dir ) ) {
@@ -162,7 +162,7 @@ class ProMatchups_Listener {
 			}
 
 			// Build the image url.
-			$image_url = untrailingslashit( $upload_url ) . '/mai-asknews/' . $image_name;
+			$image_url = untrailingslashit( $upload_url ) . '/promatchups/' . $image_name;
 		}
 
 		// Filter to disable SSL verification on local.

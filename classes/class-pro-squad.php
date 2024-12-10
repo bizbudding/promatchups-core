@@ -40,6 +40,6 @@ class ProMatchups_Pro_Squad {
 		}
 
 		// Add role.
-		add_role( 'pro_squad', __( 'Pro Squad', 'mai-asknews' ), get_role( 'subscriber' )->capabilities );
+		add_role( 'pro_squad', __( 'Pro Squad', 'promatchups' ), get_role( 'subscriber' )->capabilities );
 	}
 }

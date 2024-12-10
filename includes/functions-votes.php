@@ -34,7 +34,7 @@ function pm_get_archive_vote_box() {
 	// Set vars.
 	$has_access   = $user && $user->ID;
 	$started      = time() > $timestamp;
-	$show_outcome = $started && $data['winner_team'] && $data['loser_team'];
+	$show_outcome = $started && $data['has_outcome'];
 	$show_vote    = ! $started && $has_access;
 
 	// Bail if conditions are not met.
@@ -50,10 +50,15 @@ function pm_get_archive_vote_box() {
 		// If showing outcome.
 		if ( $show_outcome ) {
 			// Heading.
-			$html .= sprintf( '<p class="pm-vote__heading">%s</p>', __( 'Game Results', 'mai-asknews' ) );
+			$html .= sprintf( '<p class="pm-vote__heading">%s</p>', __( 'Game Results', 'promatchups' ) );
 
 			// Outcome box.
 			$html .= pm_get_outcome_box( $data );
+
+			// If user has access, show bot results.
+			if ( pm_has_access() ) {
+				$html .= pm_get_botresults( $data );
+			}
 		}
 		// If not started and they have access to vote.
 		elseif ( $has_access ) {
@@ -70,7 +75,7 @@ function pm_get_archive_vote_box() {
 			}
 
 			// Heading.
-			$html .= sprintf( '<p class="pm-vote__heading">%s</p>', __( 'Make Your Pick', 'mai-asknews' ) );
+			$html .= sprintf( '<p class="pm-vote__heading">%s</p>', __( 'Make Your Pick', 'promatchups' ) );
 
 			// Vote form.
 			$html .= pm_get_vote_form( $data );
@@ -78,7 +83,7 @@ function pm_get_archive_vote_box() {
 		// Not started, and no access to vote.
 		else {
 			// Heading.
-			$html .= sprintf( '<p class="pm-vote__heading">%s</p>', __( 'Make Your Pick', 'mai-asknews' ) );
+			$html .= sprintf( '<p class="pm-vote__heading">%s</p>', __( 'Make Your Pick', 'promatchups' ) );
 
 			// Faux vote form.
 			$html .= pm_get_faux_vote_form( $data );
@@ -122,6 +127,8 @@ function pm_get_singular_vote_box() {
 	// $show_outcome = $started && $data['winner_team'] && $data['loser_team'];
 	$show_outcome = $started;
 	$show_vote    = ! $started && $has_access;
+	$vote         = $user && $user->ID ? pm_get_user_vote( $matchup_id, $user->ID ) : [];
+	$vote         = isset( $vote['name'] ) ? $vote['name'] : '';
 
 	// Add data.
 	$data['redirect'] = get_permalink( $matchup_id ) . '#vote';
@@ -130,16 +137,16 @@ function pm_get_singular_vote_box() {
 	if ( $started ) {
 		// If we have an outcome.
 		if ( $data['winner_team'] && $data['loser_team'] ) {
-			$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Game Results', 'mai-asknews' ) );
+			$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Game Results', 'promatchups' ) );
 			$desc    = [];
-			// $desc[]  = __( 'The game has ended.', 'mai-asknews' );
+			// $desc[]  = __( 'The game has ended.', 'promatchups' );
 
 			// If we have both scores.
 			if ( $data['winner_score'] && $data['loser_score'] ) {
 				$scores = sprintf( " %s - %s", $data['winner_score'], $data['loser_score'] );
-				// $desc[] = sprintf( __( 'The %s defeated the %s%s.', 'mai-asknews' ), $data['winner_short'], $data['loser_short'], $scores );
+				// $desc[] = sprintf( __( 'The %s defeated the %s%s.', 'promatchups' ), $data['winner_short'], $data['loser_short'], $scores );
 			} else {
-				// $desc[] = __( 'Sorry, we don\'t have scores at this time.', 'mai-asknews' );
+				// $desc[] = __( 'Sorry, we don\'t have scores at this time.', 'promatchups' );
 			}
 
 			// To string.
@@ -147,19 +154,19 @@ function pm_get_singular_vote_box() {
 		}
 		// No outcome.
 		else {
-			$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Game Info', 'mai-asknews' ) );
-			$desc    = sprintf( '<p>%s</p>', __( 'Voting is closed after the game starts. Once we analyze the results and calculate your points we\'ll update here.', 'mai-asknews' ) );
+			$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Game Info', 'promatchups' ) );
+			$desc    = sprintf( '<p>%s</p>', __( 'Voting is closed after the game starts. Once we analyze the results and calculate your points we\'ll update here.', 'promatchups' ) );
 		}
 	}
 	// If they have already voted.
-	elseif ( $data['prediction'] ) {
-		$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Make Your Pick', 'mai-asknews' ) );
-		$desc    = sprintf( '<p>%s</p>', sprintf( __( 'You have already voted for the %s; leave it as is or change your vote before game time.', 'mai-asknews' ), $data['prediction'] ) );
+	elseif ( $vote ) {
+		$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Make Your Pick', 'promatchups' ) );
+		$desc    = sprintf( '<p>%s</p>', sprintf( __( 'You have already voted for the %s; leave it as is or change your vote before game time.', 'promatchups' ), $vote ) );
 	}
 	// Fallback for voting.
 	else {
-		$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Make Your Pick', 'mai-asknews' ) );
-		$desc    = sprintf( '<p>%s</p>', __( 'Compete with others to beat the SportsDesk Bot.<br>Who do you think will win?', 'mai-asknews' ) );
+		$heading = sprintf( '<h2 class="pm-vote__heading">%s</h2>', __( 'Make Your Pick', 'promatchups' ) );
+		$desc    = sprintf( '<p>%s</p>', __( 'Compete with others to beat the SportsDesk Bot.<br>Who do you think will win?', 'promatchups' ) );
 	}
 
 	// Start vote box.
@@ -177,6 +184,11 @@ function pm_get_singular_vote_box() {
 
 			// Outcome box.
 			$html .= pm_get_outcome_box( $data );
+
+			// If user has access, show bot results.
+			if ( pm_has_access() && $data['has_outcome'] ) {
+				$html .= pm_get_botresults( $data );
+			}
 		}
 		// If not started and they have access to vote.
 		elseif ( ! $started && $has_access ) {
@@ -202,6 +214,9 @@ function pm_get_singular_vote_box() {
 		$html .= $desc;
 
 	$html .= '</div>';
+
+	// Add tracking attributes.
+	$html = pm_add_matomo_attributes( $html, 'single-matchup-vote-box' );
 
 	return $html;
 }
@@ -292,24 +307,6 @@ function pm_get_outcome_box( $data ) {
 				$html .= $selected;
 			}
 		$html .= '</div>';
-	$html .= '</div>';
-
-	// Bot results.
-	// TODO: Checkmark for correct, x for incorrect, dash for push.
-	$map = [
-		1 => '✅',
-		-1 => '❌',
-		2 => '➖',
-		'default' => 'n/a',
-	];
-
-	$h2h = isset( $data['moneyline_result'] ) ? $map[ $data['moneyline_result'] ] : $map['default'];
-	$ats = isset( $data['spread_result'] ) ? $map[ $data['spread_result'] ] : $map['default'];
-
-	$html .= '<div style="display:flex;gap:1em;justify-content:center;align-items:center;--heading-margin-bottom:0;--paragraph-margin-bottom:0;">';
-		$html .= sprintf( '<p class="is-style-heading">%s</p>&mdash;', __( 'My Predictions', 'promatchups' ) );
-		$html .= sprintf( '<p class="">%s: %s</p>', __( 'H2H', 'promatchups' ), $h2h );
-		$html .= sprintf( '<p class="">%s: %s</p>', __( 'ATS', 'promatchups' ), $ats );
 	$html .= '</div>';
 
 	return $html;
@@ -441,7 +438,7 @@ function pm_get_vote_elements( $element ) {
 	$cache = [
 		'prediction' => sprintf( '<span class="pm-outcome__prediction">%s</span>', __( 'Bot pick', 'promatchups' ) ),
 		'selected'   => sprintf( '<span class="pm-outcome__selected">%s</span>', __( 'Your pick', 'promatchups' ) ),
-		'winner_team'     => sprintf( '<span class="pm-outcome__status">%s</span>', __( 'Winner', 'mai-asknews' ) ),
+		'winner_team'     => sprintf( '<span class="pm-outcome__status">%s</span>', __( 'Winner', 'promatchups' ) ),
 	];
 
 	if ( $element ) {

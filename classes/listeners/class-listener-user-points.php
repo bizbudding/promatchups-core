@@ -55,10 +55,10 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 		}
 
 		// Get all comments.
-		$bot_id   = pm_get_bot_user_id();
-		$user_id  = $this->user->ID;
-		$is_bot   = $user_id === $bot_id;
-		$votes    = get_comments(
+		$bot_id  = pm_get_bot_user_id();
+		$user_id = $this->user->ID;
+		$is_bot  = $user_id === $bot_id;
+		$votes   = get_comments(
 			[
 				'type'    => 'pm_vote',
 				'status'  => 'approve',
@@ -108,7 +108,6 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 
 			// Skip if no matchup.
 			if ( ! $matchup ) {
-				$this->return = 'No matchup found for comment ID: ' . $comment->comment_ID;
 				continue;
 			}
 
@@ -120,13 +119,12 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 				continue;
 			}
 
-			// Get body and league.
-			$body   = pm_get_insight_body( $matchup_id );
+			// Get data and league.
 			$data   = pm_get_matchup_data( $matchup_id );
 			$league = strtolower( (string) $data['league'] );
 
-			// Bail if missing body, data, or league.
-			if ( ! ( $body && $data && $league ) ) {
+			// Bail if missing data, or league.
+			if ( ! ( $data && $league ) ) {
 				continue;
 			}
 
@@ -144,16 +142,18 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 			}
 
 			// Get karma and spreads.
-			$karma       = (int) $comment->comment_karma;
-			$has_spreads = false;
+			$karma          = (int) $comment->comment_karma;
+			$spread_covered = null;
+			$spread_used    = null;
+			$score_diff     = null;
+			$has_spreads    = false;
 
 			// If bot, get spread data.
 			if ( $is_bot ) {
-				// $spread_covered = pm_get_key( 'spread_covered', $body );
 				$spread_covered = $data['spread_covered'];
-				$spread_mode    = isset( $data[ $user_vote ]['spread_used'] ) ? $data[ $user_vote ]['spread_used'] : null;
+				$spread_used    = isset( $data[ $user_vote ]['spread_used'] ) ? $data[ $user_vote ]['spread_used'] : null;
 				$score_diff     = isset( $data['score_diff'] ) ? $data['score_diff'] : null;
-				$has_spreads    = ! is_null( $spread_covered ) && ! is_null( $spread_mode ) && ! is_null( $score_diff );
+				$has_spreads    = ! is_null( $spread_covered ) && ! is_null( $spread_used ) && ! is_null( $score_diff );
 			}
 
 			// Handle win/loss/tie.
@@ -166,9 +166,7 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 					$this->points["total_wins_{$league}"]++;
 
 					// Get points.
-					// TODO: Convert to MaiAskNews_Data_Matchup.
-					$odds_data        = pm_get_odds_data( $body );
-					$odds_average     = $user_vote && isset( $odds_data[ $user_vote ]['average'] ) ? $odds_data[ $user_vote ]['average'] : null;
+					$odds_average     = $user_vote && isset( $data['odds'][ $user_vote ]['average'] ) ? $data['odds'][ $user_vote ]['average'] : null;
 					$user_vote_points = ! is_null( $odds_average ) ? pm_get_odds_points( $odds_average ) : null;
 
 					// If we have points, update them.
@@ -200,13 +198,13 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 				$this->points["total_votes_spread_{$league}"]++;
 
 				// If the spread was a tie.
-				if ( $score_diff === $spread_mode ) {
+				if ( $score_diff === $spread_used ) {
 					$this->points['total_ties_spread']++;
 					$this->points["total_ties_spread_{$league}"]++;
 				}
 				// If the spread was predicted to be covered.
 				elseif ( $spread_covered ) {
-					if ( $score_diff > $spread_mode ) {
+					if ( $score_diff > $spread_used ) {
 						$this->points['total_wins_spread']++;
 						$this->points["total_wins_spread_{$league}"]++;
 					} else {
@@ -216,7 +214,7 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 				}
 				// Spread was not predicted to be covered.
 				else {
-					if ( $score_diff < $spread_mode ) {
+					if ( $score_diff < $spread_used ) {
 						$this->points['total_wins_spread']++;
 						$this->points["total_wins_spread_{$league}"]++;
 					} else {
@@ -239,7 +237,7 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 		// If bot, calculate win percent spread.
 		if ( $is_bot && $this->points['total_wins_spread'] && $this->points['total_votes_spread'] ) {
 			$win_percent_spread                      = $this->points['total_wins_spread'] / $this->points['total_votes_spread'] * 100;
-			$win_percent                             = round( $win_percent, 2 ); // Round to 2 decimal places.
+			$win_percent_spread                      = round( $win_percent_spread, 2 );  // Round to 2 decimal places.
 			$this->win_percent['win_percent_spread'] = $win_percent_spread;
 		}
 
@@ -310,6 +308,8 @@ class ProMatchups_User_Points extends ProMatchups_Listener {
 		foreach ( $xp as $key => $value ) {
 			update_user_meta( $this->user->ID, $key, $value );
 		}
+
+		$this->return = 'User points updated for user ' . $this->user->ID . ': ' . get_the_author_meta( 'display_name', $this->user->ID );
 	}
 
 	/**

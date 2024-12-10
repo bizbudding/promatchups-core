@@ -7,6 +7,20 @@ use Ramsey\Uuid\Uuid;
 use League\CommonMark\CommonMarkConverter;
 
 /**
+ * Temporarily disable doing_it_wrong errors when WP_CLI is running.
+ * This is for `_load_textdomain_just_in_time` errors since WP 6.7.
+ *
+ * TODO: Remove?
+ *
+ * @since 1.0.0
+ *
+ * @return bool
+ */
+add_filter( 'doing_it_wrong_trigger_error', function( $return ) {
+	return defined( 'WP_CLI' ) && WP_CLI ? false : $return;
+}, 999 );
+
+/**
  * Gets it started.
  *
  * @since 0.1.0
@@ -32,29 +46,8 @@ class ProMatchups_CLI {
 	 * Construct the class.
 	 */
 	function __construct() {
-		$username = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : null;
-		$password = defined( 'PROMATCHUPS_AUTH_PW' ) ? PROMATCHUPS_AUTH_PW : null;
-
-		// Bail if no username.
-		if ( ! $username ) {
-			WP_CLI::error( 'No username found via PROMATCHUPS_AUTH_UN constant.' );
-			return;
-		}
-
-		// Bail if no password.
-		if ( ! $password ) {
-			WP_CLI::error( 'No password found via PROMATCHUPS_AUTH_PW constant.' );
-			return;
-		}
-
-		// Get user.
-		$this->user = get_user_by( 'login', $username );
-
-		// Bail if no user.
-		if ( ! $this->user ) {
-			WP_CLI::error( 'No user found with username: ' . $username );
-			return;
-		}
+		$username   = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : null;
+		$this->user = $username ? get_user_by( 'login', $username ) : null;
 	}
 
 	/**
@@ -75,6 +68,7 @@ class ProMatchups_CLI {
 	 *
 	 * Usage:
 	 * wp promatchups create_votes_csv --posts_per_page=10000000
+	 * wp promatchups create_votes_csv --posts_per_page=1000 --date_after="Nov 27, 2024 12am EST" --date_before="Dec 6, 2024" --league=NFL
 	 * wp promatchups create_votes_csv --posts_per_page=1000 --date_after="Nov 13, 2024 12am EST" --league=NFL
 	 * wp promatchups create_votes_csv --posts_per_page=100 --league=NBA --vote_type=pm_spread --vote_result=1 --user_id=1
 	 *
@@ -703,8 +697,15 @@ class ProMatchups_CLI {
 							'compare' => '!=',
 						],
 					],
+
+					// Update points.
+					'update_points'          => true,
 				]
 			);
+
+			// Update points.
+			$update_points = rest_sanitize_boolean( $assoc_args['update_points'] );
+			unset( $assoc_args['update_points'] );
 
 			// Get posts.
 			$query = new WP_Query( $assoc_args );
@@ -713,9 +714,6 @@ class ProMatchups_CLI {
 			if ( $query->have_posts() ) {
 				// Log how many total posts found.
 				WP_CLI::log( 'Posts found: ' . $query->post_count );
-
-				// Update points.
-				$update_points = isset( $assoc_args['update_points'] ) ? rest_sanitize_boolean( $assoc_args['update_points'] ) : true;
 
 				// Loop through posts.
 				while ( $query->have_posts() ) : $query->the_post();
@@ -821,13 +819,13 @@ class ProMatchups_CLI {
 	}
 
 	/**
-	 * Gets example json files from /examples/*.json and hits our endpoint.
+	 * Gets example json files from /examples/insights/*.json and hits our endpoint.
 	 *
 	 * 1. Create an application un/pw via your WP user account.
 	 * 2. Set un/pw in wp-config.php via `PROMATCHUPS_AUTH_UN` (user login name) and `PROMATCHUPS_AUTH_PW` (application password) constants.
 	 * 3. Copy the path to this file.
 	 * 4. Execute via command line:
-	 *    wp promatchups test_feed --max=2
+	 *    wp promatchups test_insights --max=2
 	 *
 	 * @since 0.1.0
 	 *
@@ -836,7 +834,7 @@ class ProMatchups_CLI {
 	 *
 	 * @return void
 	 */
-	function test_feed( $args, $assoc_args ) {
+	function test_insights( $args, $assoc_args ) {
 		try {
 			WP_CLI::log( 'Starting...' );
 
@@ -853,8 +851,23 @@ class ProMatchups_CLI {
 				return;
 			}
 
+			// Set data.
+			$url      = home_url( '/wp-json/asknews/v1/insight/' );
+			$name     = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : '';
+			$password = defined( 'PROMATCHUPS_AUTH_PW' ) ? PROMATCHUPS_AUTH_PW : '';
+
+			if ( ! $name ) {
+				WP_CLI::error( 'No name found via PROMATCHUPS_AUTH_UN constant.' );
+				return;
+			}
+
+			if ( ! $password ) {
+				WP_CLI::error( 'No password found via PROMATCHUPS_AUTH_PW constant.' );
+				return;
+			}
+
 			// Get all json files in examples directory.
-			$files = glob( PROMATCHUPS_PLUGIN_DIR . 'examples/*.json' );
+			$files = glob( PROMATCHUPS_PLUGIN_DIR . 'examples/insights/*.json' );
 
 			// Start count.
 			$i = 1;
@@ -862,31 +875,17 @@ class ProMatchups_CLI {
 			// Loop through files.
 			foreach ( $files as $file ) {
 				// Break if max reached.
-				if ( $i > $assoc_args['max'] ) {
+				if ( $i > (int) $assoc_args['max'] ) {
 					break;
 				}
 
 				// Increment count.
 				$i++;
 
-				// Set data.
-				$url      = home_url( '/wp-json/promatchups/v1/insights/' );
-				$name     = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : '';
-				$password = defined( 'PROMATCHUPS_AUTH_PW' ) ? PROMATCHUPS_AUTH_PW : '';
-
-				if ( ! $name ) {
-					WP_CLI::error( 'No name found via PROMATCHUPS_AUTH_UN constant.' );
-					return;
-				}
-
-				if ( ! $password ) {
-					WP_CLI::error( 'No password found via PROMATCHUPS_AUTH_PW constant.' );
-					return;
-				}
-
+				// Check if file exists.
 				if ( ! file_exists( $file ) ) {
 					WP_CLI::log( 'File does not exists via ' . $file );
-					return;
+					continue;
 				}
 
 				// Data to be sent in the JSON packet.
@@ -896,8 +895,138 @@ class ProMatchups_CLI {
 				// Bail if no test data.
 				if ( ! $data ) {
 					WP_CLI::log( 'No data found via ' . $file );
-					return;
+					continue;
 				}
+
+				// Prepare the request arguments.
+				$args = [
+					'method'  => 'POST',
+					'headers' => [
+						'Authorization' => 'Basic ' . base64_encode( $name . ':' . $password ),
+					],
+					'body'      => $data,
+					'sslverify' => 'local' !== wp_get_environment_type(),
+					'timeout'   => 20,
+				];
+
+				// Make the POST request.
+				$response = wp_remote_post( $url, $args );
+
+				// If error.
+				if ( is_wp_error( $response ) ) {
+					WP_CLI::log( 'Error: ' . $response->get_error_message() );
+				}
+				// Success.
+				else {
+					// Get code and decode the response body.
+					$code = wp_remote_retrieve_response_code( $response );
+					$body = wp_remote_retrieve_body( $response );
+					$body = json_decode( $body, true );
+
+					// If error.
+					if ( 200 !== $code ) {
+						$message = $body && isset( $body['message'] ) ? $body['message'] : '';
+
+						WP_CLI::log( 'Error: ' . $message );
+						continue;
+					}
+
+					// If success.
+					WP_CLI::log( $code . ' : ' . $body );
+				}
+			}
+
+			WP_CLI::success( 'Done.' );
+		} catch ( Exception $e ) {
+			WP_CLI::error( sprintf(
+				'Error: %s in %s on line %d',
+				$e->getMessage(),
+				$e->getFile(),
+				$e->getLine()
+			) );
+		}
+	}
+
+	/**
+	 * Gets example json files from /examples/outcomes/*.json and hits our endpoint.
+	 *
+	 * 1. Create an application un/pw via your WP user account.
+	 * 2. Set un/pw in wp-config.php via `PROMATCHUPS_AUTH_UN` (user login name) and `PROMATCHUPS_AUTH_PW` (application password) constants.
+	 * 3. Copy the path to this file.
+	 * 4. Execute via command line:
+	 *    wp promatchups test_outcomes --max=2
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param array $args       Standard command args.
+	 * @param array $assoc_args Keyed args like --max.
+	 *
+	 * @return void
+	 */
+	function test_outcomes( $args, $assoc_args ) {
+		try {
+			WP_CLI::log( 'Starting...' );
+
+			// Parse args.
+			$assoc_args = wp_parse_args(
+				$assoc_args,
+				[
+					'max' => 10,
+				]
+			);
+
+			if ( ! defined( 'PROMATCHUPS_PLUGIN_DIR' ) || ! is_dir( PROMATCHUPS_PLUGIN_DIR . 'examples' ) ) {
+				WP_CLI::error( 'PROMATCHUPS_PLUGIN_DIR is not defined or the examples directory is missing.' );
+				return;
+			}
+
+			// Set data.
+			$url      = home_url( '/wp-json/asknews/v1/outcome/' );
+			$name     = defined( 'PROMATCHUPS_AUTH_UN' ) ? PROMATCHUPS_AUTH_UN : '';
+			$password = defined( 'PROMATCHUPS_AUTH_PW' ) ? PROMATCHUPS_AUTH_PW : '';
+
+			if ( ! $name ) {
+				WP_CLI::error( 'No name found via PROMATCHUPS_AUTH_UN constant.' );
+				return;
+			}
+
+			if ( ! $password ) {
+				WP_CLI::error( 'No password found via PROMATCHUPS_AUTH_PW constant.' );
+				return;
+			}
+
+			// Get all json files in examples directory.
+			$files = glob( PROMATCHUPS_PLUGIN_DIR . 'examples/outcomes/*.json' );
+
+			// Start count.
+			$i = 1;
+
+			// Loop through files.
+			foreach ( $files as $file ) {
+				// Break if max reached.
+				if ( $i > (int) $assoc_args['max'] ) {
+					break;
+				}
+
+				// Increment count.
+				$i++;
+
+				// Check if file exists.
+				if ( ! file_exists( $file ) ) {
+					WP_CLI::log( 'File does not exists via ' . $file );
+					continue;
+				}
+
+				// Data to be sent in the JSON packet.
+				// Get content from json file.
+				$data = file_get_contents( $file );
+
+				// Bail if no test data.
+				if ( ! $data ) {
+					WP_CLI::log( 'No data found via ' . $file );
+					continue;
+				}
+
 
 				// Prepare the request arguments.
 				$args = [

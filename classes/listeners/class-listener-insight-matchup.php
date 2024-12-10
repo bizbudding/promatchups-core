@@ -81,12 +81,17 @@ class ProMatchups_AskNews_Insight_Matchup_Listener extends ProMatchups_Listener 
 		// Set title and date.
 		if ( $matchup_body_title ) {
 			list( $matchup_title, $matchup_datetime ) = explode( ',', $matchup_body_title, 2 );
-			$matchup_title     = trim( $matchup_title );
 			$matchup_datetime  = trim( $matchup_datetime );
 			$matchup_timestamp = $this->get_timestamp( $matchup_datetime );
 		} else {
-			$matchup_title     = $this->data['away_short'] . ' vs ' . $this->data['home_short'];
 			$matchup_timestamp = null;
+		}
+
+		// If home and away short, use for title.
+		if ( $this->data['home_team'] && $this->data['away_team'] ) {
+			$matchup_title = $this->data['away_short'] . ' vs ' . $this->data['home_short'];
+		} else {
+			$matchup_title = trim( $matchup_title );
 		}
 
 		// Set the update flag.
@@ -334,7 +339,7 @@ class ProMatchups_AskNews_Insight_Matchup_Listener extends ProMatchups_Listener 
 			if ( $insights ) {
 				foreach ( $insights as $index => $id ) {
 					// Build title with index.
-					$updated_title = sprintf( '%s (%s #%s)', $matchup_title, __( 'Update', 'mai-asknews' ), $index + 1 );
+					$updated_title = sprintf( '%s (%s #%s)', $matchup_title, __( 'Update', 'promatchups' ), $index + 1 );
 
 					// Update post title.
 					wp_update_post(

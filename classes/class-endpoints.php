@@ -42,8 +42,8 @@ class ProMatchups_Endpoints {
 	function register_endpoints() {
 		/**
 		 * NEW:
-		 * /promatchups/v1/insights/
-		 * /promatchups/v1/outcome/
+		 * /asknews/v1/insight/
+		 * /asknews/v1/outcome/
 		 *
 		 * OLD:
 		 * /maiasknews/v1/matchups/
@@ -51,14 +51,14 @@ class ProMatchups_Endpoints {
 		 */
 		$routes = [
 			// 'matchups' => 'handle_insight_request',
-			'insights' => 'handle_insight_request',
-			'outcome'  => 'handle_outcome_request',
+			'insight' => 'handle_insight_request',
+			'outcome' => 'handle_outcome_request',
 		];
 
 		// Loop through routes and register them.
 		foreach ( $routes as $path => $callback ) {
 			// register_rest_route( 'maiasknews/v1', $path, [
-			register_rest_route( 'promatchups/v1', $path, [
+			register_rest_route( 'asknews/v1', $path, [
 				'methods'             => 'POST', // I think the testing CLI needs PUT. The API does check for auth cookies and nonces when you make POST or PUT requests, but not GET requests.
 				'callback'            => [ $this, $callback ],
 				'permission_callback' => [ $this, 'authenticate_request' ],
@@ -156,7 +156,7 @@ class ProMatchups_Endpoints {
 		// Matchup.
 		add_meta_box(
 			'matchup_outcome_asknews_body', // ID of the meta box
-			__( 'AskNews Outcome (JSON)', 'mai-asknews' ), // Title of the meta box
+			__( 'AskNews Outcome (JSON)', 'promatchups' ), // Title of the meta box
 			[ $this, 'display_matchup_outcome_metabox' ], // Callback function to display the field
 			'matchup', // Post type to add the meta box
 			'normal', // Context where the box will be displayed
@@ -166,7 +166,7 @@ class ProMatchups_Endpoints {
 		// Matchup Latest Insight.
 		add_meta_box(
 			'matchup_insight_asknews_body', // ID of the meta box
-			__( 'AskNews Latest Insight (JSON)', 'mai-asknews' ), // Title of the meta box
+			__( 'AskNews Latest Insight (JSON)', 'promatchups' ), // Title of the meta box
 			[ $this, 'display_matchup_insight_metabox' ], // Callback function to display the field
 			'matchup', // Post type to add the meta box
 			'normal', // Context where the box will be displayed
@@ -176,7 +176,7 @@ class ProMatchups_Endpoints {
 		// Insight.
 		add_meta_box(
 			'insight_asknews_body', // ID of the meta box
-			__( 'AskNews Insight (JSON)', 'mai-asknews' ), // Title of the meta box
+			__( 'AskNews Insight (JSON)', 'promatchups' ), // Title of the meta box
 			[ $this, 'display_insight_metabox' ], // Callback function to display the field
 			'insight', // Post type to add the meta box
 			'normal', // Context where the box will be displayed
@@ -207,7 +207,7 @@ class ProMatchups_Endpoints {
 	 * @return void
 	 */
 	function display_matchup_insight_metabox( $post ) {
-		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'mai-asknews' ) );
+		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'promatchups' ) );
 		echo $this->get_metabox_content( pm_get_insight_id( $post->ID ), 'asknews_body' );
 		echo $this->get_toggle_script();
 	}
@@ -222,7 +222,7 @@ class ProMatchups_Endpoints {
 	 * @return void
 	 */
 	function display_insight_metabox( $post ) {
-		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'mai-asknews' ) );
+		printf( '<p>%s</p>', __( 'Click to show nested data. `Shift + click` or `CMD + click` to show all nested data of an item.', 'promatchups' ) );
 		echo $this->get_metabox_content( $post->ID, 'asknews_body' );
 		echo $this->get_toggle_script();
 	}

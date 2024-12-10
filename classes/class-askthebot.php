@@ -82,7 +82,7 @@ class ProMatchups_AskTheBot {
 		}
 
 		// Enqueue CSS.
-		wp_enqueue_style( 'mai-askthebot', pm_get_file_url( 'mai-askthebot', 'css', false ), [], pm_get_file_version( 'mai-askthebot', 'css', false ) );
+		wp_enqueue_style( 'askthebot', pm_get_file_url( 'askthebot', 'css', false ), [], pm_get_file_version( 'askthebot', 'css', false ) );
 
 		// Bail if not form page with access.
 		if ( ! $form_page && pm_has_elite_membership() ) {
@@ -90,8 +90,8 @@ class ProMatchups_AskTheBot {
 		}
 
 		// Enqueue JS.
-		wp_enqueue_script( 'mai-askthebot', pm_get_file_url( 'mai-askthebot', 'js', false ), [], pm_get_file_version( 'mai-askthebot', 'js', false ), true );
-		wp_localize_script( 'mai-askthebot', 'maiAskTheBotVars', [
+		wp_enqueue_script( 'askthebot', pm_get_file_url( 'askthebot', 'js', false ), [], pm_get_file_version( 'askthebot', 'js', false ), true );
+		wp_localize_script( 'askthebot', 'maiAskTheBotVars', [
 			'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
 			'userAvatar' => get_avatar( get_current_user_id(), 64 ),
 		] );
@@ -142,7 +142,7 @@ class ProMatchups_AskTheBot {
 				printf( '<style>.askthebot-chat { --user-avatar-url:url(\'%s\'); }</style>', $avatar_url );
 				echo $this->get_chat_html();
 				echo $this->get_chat_form();
-				printf( '<p class="has-xl-margin-top has-sm-font-size" style="opacity:.75;"><em>%s</em></p>', __( 'Please review the SportsDesk Bot’s chats to make sure they’re accurate.', 'mai-asknews' ) );
+				printf( '<p class="has-xl-margin-top has-sm-font-size" style="opacity:.75;"><em>%s</em></p>', __( 'Please review the SportsDesk Bot’s chats to make sure they’re accurate.', 'promatchups' ) );
 			echo '</div>';
 		echo '</div>';
 	}
@@ -208,7 +208,7 @@ class ProMatchups_AskTheBot {
 		}
 		// No posts.
 		else {
-			$html .= sprintf( '<div class="askthebot-chatlist">%s</div>', __( 'No chat messages yet.', 'mai-asknews' ) );
+			$html .= sprintf( '<div class="askthebot-chatlist">%s</div>', __( 'No chat messages yet.', 'promatchups' ) );
 		}
 
 		wp_reset_postdata();
@@ -308,11 +308,11 @@ class ProMatchups_AskTheBot {
 		$html  = '';
 		$html .= '<div id="chat-bottom"></div>';
 		$html .= sprintf( '<form id="askthebot-form" class="askthebot-form" action="%s" method="post">', esc_url( admin_url('admin-post.php') ) );
-			$html .= sprintf( '<p><button id="chat-down" class="button button-secondary button-small" style="display:none;margin-inline:auto;">%s</button></p>', __( 'Scroll to bottom ↓', 'mai-asknews' ) );
-			$html .= sprintf( '<p><textarea name="askthebot_question" id="askthebot-question" placeholder="%s" required></textarea></p>', __( 'Ask the bot anything...', 'mai-asknews' ) );
+			$html .= sprintf( '<p><button id="chat-down" class="button button-secondary button-small" style="display:none;margin-inline:auto;">%s</button></p>', __( 'Scroll to bottom ↓', 'promatchups' ) );
+			$html .= sprintf( '<p><textarea name="askthebot_question" id="askthebot-question" placeholder="%s" required></textarea></p>', __( 'Ask the bot anything...', 'promatchups' ) );
 			$html .= '<div class="askthebot-form__buttons">';
-				$html .= sprintf( '<button type="submit" class="button button-ajax"><span class="button-text">%s</span></button>', __( 'Send Message', 'mai-asknews' ) );
-				$html .= sprintf( '<a id="chat-new" class="button button-link" href="%s">%s</a>', get_permalink(), __( 'Start a new chat', 'mai-asknews' ) );
+				$html .= sprintf( '<button type="submit" class="button button-ajax"><span class="button-text">%s</span></button>', __( 'Send Message', 'promatchups' ) );
+				$html .= sprintf( '<a id="chat-new" class="button button-link" href="%s">%s</a>', get_permalink(), __( 'Start a new chat', 'promatchups' ) );
 			$html .= '</div>';
 			$html .= sprintf( '<input type="hidden" name="askthebot_user_id" value="%s">', get_current_user_id() );
 			$html .= sprintf( '<input type="hidden" name="askthebot_post_id" value="%s">', isset( $_GET['chat'] ) ? absint( $_GET['chat'] ) : 0 );
@@ -335,7 +335,7 @@ class ProMatchups_AskTheBot {
 
 		// Verify nonce for security.
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'pm_askthebot_nonce' ) ) {
-			$message = __( 'Ask the Bot security check failed.', 'mai-asknews' );
+			$message = __( 'Ask the Bot security check failed.', 'promatchups' );
 
 			if ( $ajax ) {
 				wp_send_json_error( [ 'message' => $message ] );
@@ -351,7 +351,7 @@ class ProMatchups_AskTheBot {
 
 		// Bail if no client ID or secret.
 		if ( ! $client_id || ! $client_secret ) {
-			$message = __( 'Missing API keys.', 'mai-asknews' );
+			$message = __( 'Missing API keys.', 'promatchups' );
 
 			if ( $ajax ) {
 				wp_send_json_error( [ 'message' => $message ] );
@@ -368,7 +368,7 @@ class ProMatchups_AskTheBot {
 
 		// Bail if no user ID.
 		if ( ! $user_id ) {
-			$message = __( 'No user ID.', 'mai-asknews' );
+			$message = __( 'No user ID.', 'promatchups' );
 
 			if ( $ajax ) {
 				wp_send_json_error( [ 'message' => $message ] );
@@ -380,7 +380,7 @@ class ProMatchups_AskTheBot {
 
 		// Bail if no question.
 		if ( ! $question ) {
-			$message = __( 'No question asked.', 'mai-asknews' );
+			$message = __( 'No question asked.', 'promatchups' );
 
 			if ( $ajax ) {
 				wp_send_json_error( [ 'message' => $message ] );
@@ -394,7 +394,7 @@ class ProMatchups_AskTheBot {
 		if ( $post_id ) {
 			// If not a post, or not askthebot post type.
 			if ( ! get_post( $post_id ) || 'askthebot' !== get_post_type( $post_id ) ) {
-				$message = __( 'Invalid post ID.', 'mai-asknews' );
+				$message = __( 'Invalid post ID.', 'promatchups' );
 
 				if ( $ajax ) {
 					wp_send_json_error( [ 'message' => $message ] );
@@ -406,7 +406,7 @@ class ProMatchups_AskTheBot {
 
 			// Bail if user is not the post author.
 			if ( $user_id !== (int) get_post_field( 'post_author', $post_id ) ) {
-				$message = __( 'You are not the author of this chat.', 'mai-asknews' );
+				$message = __( 'You are not the author of this chat.', 'promatchups' );
 
 				if ( $ajax ) {
 					wp_send_json_error( [ 'message' => $message ] );

@@ -244,8 +244,8 @@ class ProMatchups_Singular {
 		// Do CCA hook for Matchup Promo 2 (Mai Content Areas)
 		do_action( 'pm_promo_cca2', $this->data, $first );
 
-		$this->do_sources( $first ); // displayed on the site as Latest News
-		$this->do_web( $first );
+		$this->do_sources( ! pm_has_access(), $first ); // displayed on the site as Latest News
+		$this->do_web( ! pm_has_access(), $first );
 	}
 
 	/**

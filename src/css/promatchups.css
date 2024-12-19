@@ -882,6 +882,14 @@ body {
 	font-size: var(--font-size-xs);
 }
 
+.pm-previous__date {
+	min-width: 20%;
+}
+
+.pm-previous__icon {
+	min-width: 12%;
+}
+
 .pm-botresults {
 	--heading-margin-bottom: 0;
 	--paragraph-margin-bottom: 0;

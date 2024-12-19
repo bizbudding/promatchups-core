@@ -25,9 +25,9 @@ class ProMatchups_Shortcodes {
 	 * @return void
 	 */
 	function hooks() {
-		add_shortcode( 'pm_user_datatable',  [ $this, 'get_datatable' ] );
-		add_shortcode( 'pm_user_stats',      [ $this, 'get_stats' ] );
-		add_shortcode( 'pm_leaderboard',     [ $this, 'get_leaderboard' ] );
+		add_shortcode( 'pm_user_datatable', [ $this, 'get_datatable' ] );
+		add_shortcode( 'pm_user_stats',     [ $this, 'get_stats' ] );
+		add_shortcode( 'pm_leaderboard',    [ $this, 'get_leaderboard' ] );
 	}
 
 	function get_datatable( $atts ) {
@@ -47,10 +47,8 @@ class ProMatchups_Shortcodes {
 			return $html;
 		}
 
-		// wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css', [], '2.1.8' );
-		// wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/2.1.8/js/dataTables.min.js', [ 'jquery' ], '2.1.8', true );
-		wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css', [], '2.1.8' );
-		wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/2.1.8/js/dataTables.js', [ 'jquery' ], '2.1.8', true );
+		wp_enqueue_style( 'datatables', 'https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css', [], '2.1.8' );
+		wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/2.1.8/js/dataTables.min.js', [ 'jquery' ], '2.1.8', true );
 
 		// wp_enqueue_style( 'datatables-responsive', 'https://cdn.datatables.net/responsive/3.0.3/css/responsive.dataTables.min.css', [], '2.4.1' );
 		// wp_enqueue_script( 'datatables-responsive', 'https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js', [ 'datatables', 'jquery' ], '2.4.1', true );
@@ -67,7 +65,7 @@ class ProMatchups_Shortcodes {
 				'type'    => [ 'pm_vote', 'pm_spread' ],
 				'status'  => 'approve',
 				'user_id' => $user_id,
-				'number'  => 500, // This is hardcoded in the table filters too.
+				'number'  => 1000, // This is hardcoded in the table filters too.
 				// 'orderby' => 'comment_date',
 				// 'order'   => 'ASC',
 			]
@@ -76,7 +74,7 @@ class ProMatchups_Shortcodes {
 		// Loop through comments and build an array of date, result (karma), league, and probability.
 		foreach ( $comments as $comment ) {
 			// Skip if karma is 0.
-			if ( 0 === (int) $comment->comment_karma ) {
+			if ( is_null( $comment->comment_karma ) || 0 === (int) $comment->comment_karma ) {
 				continue;
 			}
 
@@ -97,16 +95,28 @@ class ProMatchups_Shortcodes {
 
 			// Format type.
 			$type = $comment->comment_type;
-			$type = str_replace( 'pm_', '', $type );
-			$type = ucwords( $type );
+			// $type = str_replace( 'pm_', '', $type );
+			// $type = ucwords( $type );
+
+			// Map type.
+			switch ( $type ) {
+				case 'pm_vote':
+					$probability = $comment->comment_parent;
+					$type        = 'H2H';
+				break;
+				case 'pm_spread':
+					$probability = '';
+					$type        = 'ATS';
+				break;
+			}
 
 			// Add to array.
 			$array[] = [
 				'date'        => date( 'Y-m-d', strtotime( $comment->comment_date ) ),
 				'title'       => sprintf( '<a class="entry-title-link" href="%s">%s</a>',  get_permalink( $comment->comment_post_ID ), get_the_title( $comment->comment_post_ID ) ),
 				'league'      => $comment->comment_agent,
+				'probability' => $probability,
 				'result'      => $result,
-				'probability' => $comment->comment_parent,
 				'type'        => $type,
 			];
 		}
@@ -167,8 +177,8 @@ class ProMatchups_Shortcodes {
 					$html .= '<label for="type-filter">Type:</label>';
 					$html .= '<select style="min-height:48px;" id="type-filter">';
 						$html .= '<option value="">All</option>';
-						$html .= '<option value="Vote">Vote</option>';
-						$html .= '<option value="Spread">Spread</option>';
+						$html .= '<option value="H2H">H2H</option>';
+						$html .= '<option value="ATS">ATS</option>';
 					$html .= '</select>';
 				$html .= '</div>';
 			$html .= '</div>';
@@ -242,7 +252,7 @@ class ProMatchups_Shortcodes {
 					ordering: true,
 					searching: true, // Needed for filters too.
 					info: true,
-					pageLength: 500,
+					pageLength: 1000,
 					// responsive: true,
 					dom: '<"top"i>rt<"bottom pages-row"lp><"clear">', // Add entries-per-page (l) to the bottom with pagination (p)
 					language: {
@@ -252,7 +262,9 @@ class ProMatchups_Shortcodes {
 						'<option value="50">50 rows</option>' +
 						'<option value="100">100 rows</option>' +
 						'<option value="200">200 rows</option>' +
-						'<option value="500">500 (max query)</option>' +
+						'<option value="500">500 rows</option>' +
+						'<option value="750">750 rows</option>' +
+						'<option value="1000">1000 (max query)</option>' +
 						'</select>'
 					},
 				});

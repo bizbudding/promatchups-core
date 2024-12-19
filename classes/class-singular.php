@@ -244,8 +244,10 @@ class ProMatchups_Singular {
 		// Do CCA hook for Matchup Promo 2 (Mai Content Areas)
 		do_action( 'pm_promo_cca2', $this->data, $first );
 
-		$this->do_sources( ! pm_has_access(), $first ); // displayed on the site as Latest News
-		$this->do_web( ! pm_has_access(), $first );
+		if ( pm_has_access() ) {
+			$this->do_sources( $first ); // displayed on the site as Latest News
+			$this->do_web( $first );
+		}
 	}
 
 	/**
@@ -638,7 +640,7 @@ class ProMatchups_Singular {
 											$html .= sprintf( '<th>%s</th>', __( 'Date', 'promatchups' ) );
 											$html .= sprintf( '<th>%s</th>', __( 'Matchup', 'promatchups' ) );
 											$html .= sprintf( '<th class="has-text-align-center">%s</th>', __( 'H2H', 'promatchups' ) );
-											$html .= sprintf( '<th class="has-text-align-center">%s</th>', __( 'Spread', 'promatchups' ) );
+											$html .= sprintf( '<th class="has-text-align-center">%s</th>', __( 'ATS', 'promatchups' ) );
 										$html .= '</tr>';
 									$html .= '</thead>';
 

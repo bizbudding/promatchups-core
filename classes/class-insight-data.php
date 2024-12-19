@@ -91,6 +91,12 @@ class ProMatchups_Insight_Data {
 			// Sanitize.
 			$this->data[ $key ] = pm_sanitize_string( $value );
 		}
+
+		// // If the spread is not covered, flip the probability.
+		// if ( ! is_null( $this->data['spread_covered'] ) && ! $this->data['spread_covered'] ) {
+		// 	// Maybe handle probability conversion.
+		// 	$this->data['probability'] = max( $this->data['probability'], 100 - (int) $this->data['probability'] );
+		// }
 	}
 
 	/**
@@ -400,8 +406,8 @@ class ProMatchups_Insight_Data {
 		$this->data['prediction']       = pm_get_key( 'choice', $this->body );
 		$this->data['prediction_short'] = pm_get_team_short_name( $this->data['prediction'], $this->data['league'] );
 		$this->data['predicted_score']  = $this->get_predicted_score();
-		$this->data['probability']      = pm_get_key( 'probability', $this->body );
 		$this->data['likelihood']       = pm_get_key( 'likelihood', $this->body );
+		$this->data['probability']      = pm_get_key( 'probability', $this->body );
 	}
 
 	/**

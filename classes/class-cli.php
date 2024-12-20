@@ -422,6 +422,9 @@ class ProMatchups_CLI {
 
 						// If we have a spread covered prediction.
 						if ( ! is_null( $spread_covered ) ) {
+							// Spread vote is on the favored team.
+							$team = $favored ?: $team;
+
 							// Update spread vote.
 							$spread_id = pm_update_user_vote( $matchup_id, $bot_id, $team, $spread_covered );
 						}

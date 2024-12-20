@@ -62,10 +62,15 @@ class ProMatchups_Shortcodes {
 		// Get user votes.
 		$comments = get_comments(
 			[
-				'type'    => [ 'pm_vote', 'pm_spread' ],
-				'status'  => 'approve',
-				'user_id' => $user_id,
-				'number'  => 1000, // This is hardcoded in the table filters too.
+				'type'       => [ 'pm_vote', 'pm_spread' ],
+				'status'     => 'approve',
+				'user_id'    => $user_id,
+				'number'     => 1000, // This is hardcoded in the table filters too.
+				'date_query' => [
+					[
+						'year' => '2024',
+					],
+				],
 				// 'orderby' => 'comment_date',
 				// 'order'   => 'ASC',
 			]
@@ -94,30 +99,42 @@ class ProMatchups_Shortcodes {
 			}
 
 			// Format type.
-			$type = $comment->comment_type;
+			$type    = $comment->comment_type;
+			$covered = '';
 			// $type = str_replace( 'pm_', '', $type );
 			// $type = ucwords( $type );
 
 			// Map type.
 			switch ( $type ) {
 				case 'pm_vote':
-					$probability = $comment->comment_parent;
-					$type        = 'H2H';
+					$type = 'H2H';
 				break;
 				case 'pm_spread':
-					$probability = '';
-					$type        = 'ATS';
+					$type = 'ATS';
+
+					switch ( $comment->comment_parent ) {
+						case 1:
+						case '1':
+							$covered = __( 'Yes', 'promatchups' );
+						break;
+						case 0:
+						case '0':
+							$covered = __( 'No', 'promatchups' );
+						break;
+					}
+
 				break;
 			}
 
 			// Add to array.
 			$array[] = [
-				'date'        => date( 'Y-m-d', strtotime( $comment->comment_date ) ),
-				'title'       => sprintf( '<a class="entry-title-link" href="%s">%s</a>',  get_permalink( $comment->comment_post_ID ), get_the_title( $comment->comment_post_ID ) ),
-				'league'      => $comment->comment_agent,
-				'probability' => $probability,
-				'result'      => $result,
-				'type'        => $type,
+				'date'       => date( 'Y-m-d', strtotime( $comment->comment_date ) ),
+				'title'      => sprintf( '<a class="entry-title-link" href="%s">%s</a>',  get_permalink( $comment->comment_post_ID ), get_the_title( $comment->comment_post_ID ) ),
+				'league'     => $comment->comment_agent,
+				'confidence' => $comment->comment_author_IP,
+				'covered'    => $covered,
+				'result'     => $result,
+				'type'       => $type,
 			];
 		}
 
@@ -181,6 +198,10 @@ class ProMatchups_Shortcodes {
 						$html .= '<option value="ATS">ATS</option>';
 					$html .= '</select>';
 				$html .= '</div>';
+				$html .= '<div style="width:10ch;">';
+					$html .= '<label for="confidence-filter">Confidence:</label>';
+					$html .= '<input type="number" id="confidence-filter" placeholder="60" min="0" style="min-height: 48px;">';
+				$html .= '</div>';
 			$html .= '</div>';
 
 			// Date filter.
@@ -204,16 +225,18 @@ class ProMatchups_Shortcodes {
 			$html .= '<table id="vote-stats">';
 				$html .= '<thead>';
 					$html .= '<tr>';
-						$html .= sprintf( '<th>%s</th>', __( 'Date', 'promatchups' ) );
-						$html .= sprintf( '<th>%s</th>', __( 'Matchup', 'promatchups' ) );
-						$html .= sprintf( '<th>%s</th>', __( 'League', 'promatchups' ) );
-						$html .= sprintf( '<th>%s</th>', __( 'Probability', 'promatchups' ) );
-						$html .= sprintf( '<th>%s</th>', __( 'Result', 'promatchups' ) );
-						$html .= sprintf( '<th>%s</th>', __( 'Type', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="date">%s</th>', __( 'Date', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="matchup">%s</th>', __( 'Matchup', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="league">%s</th>', __( 'League', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="confidence">%s</th>', __( 'Confidence', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="covered">%s</th>', __( 'Covered', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="result">%s</th>', __( 'Result', 'promatchups' ) );
+						$html .= sprintf( '<th data-column="type">%s</th>', __( 'Type', 'promatchups' ) );
 					$html .= '</tr>';
 				$html .= '</thead>';
 				$html .= '<tfoot>';
 					$html .= '<tr>';
+						$html .= '<th></th>';
 						$html .= '<th></th>';
 						$html .= '<th></th>';
 						$html .= '<th></th>';
@@ -234,47 +257,103 @@ class ProMatchups_Shortcodes {
 			?>
 			<script>
 			jQuery(document).ready(function($) {
-				var data = <?php echo $json_data; ?>;
-
-				// Initialize DataTable.
-				var table = $('#vote-stats').DataTable({
+				var data    = <?php echo $json_data; ?>;
+				var tableId = '#vote-stats';
+				var table   = $(tableId).DataTable({
 					data: data,
 					columns: [
 						{ data: 'date', title: 'Date' },
 						{ data: 'title', title: 'Matchup' },
 						{ data: 'league', title: 'League' },
-						{ data: 'probability', title: 'Probability' },
+						{ data: 'confidence', title: 'Confidence' },
+						{ data: 'covered', title: 'Covered' },
 						{ data: 'result', title: 'Result' },
 						{ data: 'type', title: 'Type' }
 					],
 					order: [[0, 'desc']],
 					paging: true,
 					ordering: true,
-					searching: true, // Needed for filters too.
+					searching: true,
 					info: true,
 					pageLength: 1000,
-					// responsive: true,
-					dom: '<"top"i>rt<"bottom pages-row"lp><"clear">', // Add entries-per-page (l) to the bottom with pagination (p)
+					dom: '<"top"i>rt<"bottom pages-row"lp><"clear">',
 					language: {
-					lengthMenu: '<select>' + // Only the dropdown without text.
-						'<option value="10">10 rows</option>' +
-						'<option value="25">25 rows</option>' +
-						'<option value="50">50 rows</option>' +
-						'<option value="100">100 rows</option>' +
-						'<option value="200">200 rows</option>' +
-						'<option value="500">500 rows</option>' +
-						'<option value="750">750 rows</option>' +
-						'<option value="1000">1000 (max query)</option>' +
-						'</select>'
+						lengthMenu: '<select>' +
+							'<option value="10">10 rows</option>' +
+							'<option value="25">25 rows</option>' +
+							'<option value="50">50 rows</option>' +
+							'<option value="100">100 rows</option>' +
+							'<option value="200">200 rows</option>' +
+							'<option value="500">500 rows</option>' +
+							'<option value="750">750 rows</option>' +
+							'<option value="1000">1000 (max query)</option>' +
+							'</select>'
 					},
 				});
 
-				// Function to calculate and display win percentage.
-				function updateWinPercentage() {
-					// Get filtered rows
-					var filteredData = table.rows({ filter: 'applied' }).data();
+				// Dynamically resolve column indices once and cache them
+				var columnIndices = {
+					date: $(`${tableId} thead th[data-column="date"]`).index(),
+					league: $(`${tableId} thead th[data-column="league"]`).index(),
+					confidence: $(`${tableId} thead th[data-column="confidence"]`).index(),
+					result: $(`${tableId} thead th[data-column="result"]`).index(),
+					type: $(`${tableId} thead th[data-column="type"]`).index(),
+				};
 
-					// Count total rows and wins
+				// Custom filtering logic
+				$.fn.dataTable.ext.search = [];
+
+				// Date range filter
+				$.fn.dataTable.ext.search.push(function(settings, data) {
+					var min = $('#min-date').val();
+					var max = $('#max-date').val();
+					var date = data[columnIndices.date];
+
+					if ((min === '' || date >= min) && (max === '' || date <= max)) {
+						return true;
+					}
+					return false;
+				});
+
+				// Confidence filter
+				$.fn.dataTable.ext.search.push(function(settings, data) {
+					var minConfidence = parseFloat($('#confidence-filter').val()) || 0;   // Default to 0 if empty
+					var confidence    = parseFloat(data[columnIndices.confidence]) || 0;
+
+					return confidence >= minConfidence;
+				});
+
+				// Event listeners for filters
+				$('#min-date, #max-date').on('change', function() {
+					table.draw();
+				});
+
+				$('#confidence-filter').on('keyup change', function() {
+					table.draw();
+				});
+
+				$('#league-filter').on('change', function() {
+					var value = $(this).val();
+					table.column(columnIndices.league).search(value).draw();
+				});
+
+				$('#result-filter').on('change', function() {
+					var value = $(this).val();
+					table.column(columnIndices.result).search(value).draw();
+				});
+
+				$('#type-filter').on('change', function() {
+					var value = $(this).val();
+					table.column(columnIndices.type).search(value).draw();
+				});
+
+				$('#global-search').on('keyup', function() {
+					table.search(this.value).draw();
+				});
+
+				// Win percentage calculation
+				function updateWinPercentage() {
+					var filteredData = table.rows({ filter: 'applied' }).data();
 					var totalRows = filteredData.length;
 					var winCount = 0;
 
@@ -284,53 +363,14 @@ class ProMatchups_Shortcodes {
 						}
 					});
 
-					// Calculate win percentage
 					var winPercentage = totalRows > 0 ? (winCount / totalRows) * 100 : 0;
-
-					// Update the display
 					$('#win-percentage').text(`${winPercentage.toFixed(2)}%`);
 				}
 
-				// Update win percentage on every table draw (e.g., search, filter, paginate).
 				table.on('draw', updateWinPercentage);
 
-				// Initial calculation
+				// Initial calculation for win percentage
 				updateWinPercentage();
-
-				// Date range filtering.
-				$('#min-date, #max-date').on('change', function() {
-					var min = $('#min-date').val();
-					var max = $('#max-date').val();
-					$.fn.dataTable.ext.search.push(function(settings, data) {
-						var date = data[0]; // Date column value
-						if ((min === '' || date >= min) && (max === '' || date <= max)) {
-							return true;
-						}
-						return false;
-					});
-					table.draw();
-				});
-
-				// Global search bar.
-				$('#global-search').on('keyup', function() {
-					table.search(this.value).draw();
-				});
-
-				// Column-specific filters.
-				$('#league-filter').on('change', function() {
-					var value = $(this).val();
-					table.column(2).search(value).draw(); // League is column index 2
-				});
-
-				$('#result-filter').on('change', function() {
-					var value = $(this).val();
-					table.column(4).search(value).draw(); // Result is column index 4
-				});
-
-				$('#type-filter').on('change', function() {
-					var value = $(this).val();
-					table.column(5).search(value).draw(); // Type is column index 5
-				});
 			});
 			</script>
 			<?php

@@ -180,13 +180,15 @@ class ProMatchups_Insight_Data {
 	function set_favored() {
 		// If the favored team is set in the body. This was added mid Nov 2024.
 		if ( isset( $this->body['favored_team'] ) ) {
-			$this->data['favored'] = $this->body['favored_team'];
+			$this->data['favored']       = $this->body['favored_team'];
+			$this->data['favored_short'] = pm_get_team_short_name( $this->data['favored'], $this->data['league'] );
 			return;
 		}
 
 		// Bail if no odds data.
 		if ( ! $this->odds ) {
-			$this->data['favored'] = null;
+			$this->data['favored']       = null;
+			$this->data['favored_short'] = null;
 			return;
 		}
 
@@ -231,7 +233,8 @@ class ProMatchups_Insight_Data {
 			}
 		}
 
-		$this->data['favored'] = $favorite;
+		$this->data['favored']       = $favorite;
+		$this->data['favored_short'] = pm_get_team_short_name( $favorite, $this->data['league'] );
 	}
 
 	/**
@@ -313,6 +316,8 @@ class ProMatchups_Insight_Data {
 		// Set var.
 		$values = [];
 
+		// TODO: Add spread_juice to the data array.
+
 		// Loop through the spreads data for each team.
 		foreach ( $this->spreads as $team_full => $bookmakers ) {
 			// Validate team.
@@ -343,16 +348,21 @@ class ProMatchups_Insight_Data {
 				}
 			}
 
+			// Set values without keys.
+			$spread_values = array_values( $bookmakers );
+
+			// Get juice value.
+			$juice_values = array_column( $spread_values, 0 );
+			$juice_used   = $this->get_mode( $juice_values );
+
 			// Get spread used.
 			if ( isset( $this->data['spread_used'] ) ) {
 				$spread_used = $this->data['spread_used'];
 			}
 			// No spread_used value, fall back to spread mode.
 			else {
-				// Set values, without keys, and get the spread mode.
-				$spread_values = array_values( $bookmakers );
 				$spread_values = array_column( $spread_values, 1 );
-				$spread_used   = $this->get_spread_mode( $spread_values );
+				$spread_used   = $this->get_mode( $spread_values );
 			}
 
 			// Find the averages.
@@ -365,9 +375,10 @@ class ProMatchups_Insight_Data {
 
 			// Add to $spreads array.
 			$values[ $team_full ] = [
-				'odds_average'   => $odds_average,
-				'spread_used'    => $spread_used,
-				'spread_average' => $spread_average,
+				'odds_average'   => ! is_null( $odds_average ) ? (float) $odds_average : null,
+				'spread_juice'   => ! is_null( $juice_used ) ? (float) $juice_used : null,
+				'spread_used'    => ! is_null( $spread_used ) ? (float) $spread_used : null,
+				'spread_average' => ! is_null( $spread_average ) ? (float) $spread_average : null,
 				'spreads'        => $bookmakers,
 			];
 		}
@@ -377,6 +388,7 @@ class ProMatchups_Insight_Data {
 		$teams   = [ $this->data['away_team'], $this->data['home_team'] ];
 		$keys    = [
 			'odds_average',
+			'spread_juice',
 			'spread_used',
 			'spread_average',
 			'spreads',
@@ -509,7 +521,7 @@ class ProMatchups_Insight_Data {
 	}
 
 	/**
-	 * Get the spreads mode from values.
+	 * Get the mode from values.
 	 *
 	 * Counts the occurrences of each value.
 	 * Find the highest occurrence count.
@@ -523,7 +535,7 @@ class ProMatchups_Insight_Data {
 	 *
 	 * @return float
 	 */
-	function get_spread_mode( array $spread_values ) {
+	function get_mode( array $spread_values ) {
 		$spread_values    = array_map( 'pm_parse_float', $spread_values );
 		$spread_counts    = pm_array_count_floats( $spread_values );
 		$spread_max_count = max( $spread_counts );

@@ -201,6 +201,8 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	$league           = $data['league'];
 	$prediction       = $data['prediction'];
 	$prediction_short = $data['prediction_short'] ?: $prediction;
+	$favored          = $data['favored'];
+	$favored_short    = $data['favored_short'];
 	$probability      = $data['probability'];
 	// $likelihood       = $data['likelihood'];
 	$spread_covered   = $data['spread_covered'];
@@ -209,7 +211,6 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	// If prediction.
 	if ( $prediction_short ) {
 		$visible = sprintf( "%s win", $prediction_short );
-		$favored = ! is_null( $data['favored'] ) ? $data['favored'] : null;
 
 		if ( $favored && $prediction && $favored !== $prediction ) {
 			$visible .= sprintf( ' (%s!)', __( 'Underdog', 'promatchups' ) );
@@ -230,8 +231,8 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	if ( ! is_null( $spread_covered ) ) {
 		// If we have a favored team the spread vote is for the favored team (new way).
 		// If no favored team, the spread vote is for the predicted winner (old way).
-		$team       = ! is_null( $data['favored'] ) ? $data['favored'] : $prediction;
-		$team_short = ! is_null( $data['favored_short'] ) ? $data['favored_short'] : $prediction_short;
+		$team       = $favored ?: $prediction;
+		$team_short = $favored_short ?: $prediction_short;
 		$spread     = isset( $data['spreads'][ $team ]['spread_used'] ) ? $data['spreads'][ $team ]['spread_used'] : null;
 
 		// If spread.

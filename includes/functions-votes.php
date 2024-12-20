@@ -449,7 +449,7 @@ function pm_get_vote_elements( $element ) {
 }
 
 /**
- * Craetes or updates a user's vote for a matchup.
+ * Creates or updates a user's vote for a matchup.
  *
  * @since 0.2.0
  *

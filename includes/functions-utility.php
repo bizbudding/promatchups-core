@@ -12,7 +12,16 @@ function pm_parse_float( $value ) {
 	$float = (float) $value;
 	$int   = (int) $float;
 
-	return $int === $float ? $int : $float;
+	// If the float is effectively an integer, return it as an integer
+	if ( $int === $float ) {
+		return $int;
+	}
+
+	// Otherwise, trim trailing zeros and return as a string.
+	$value = number_format( $float, 10, '.', '' );
+	$value = rtrim( rtrim( $value, '0' ), '.' );
+
+	return $value;
 }
 
 /**

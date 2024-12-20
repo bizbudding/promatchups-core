@@ -214,7 +214,7 @@ class ProMatchups_AskNews_Insight_Matchup_Listener extends ProMatchups_Listener 
 				// If we have a spread covered prediction.
 				if ( ! is_null( $spread_covered ) ) {
 					// Add author/bot vote for spread.
-					pm_update_user_vote( $this->matchup_id, $bot_id, $this->data['prediction'], $spread_covered );
+					pm_update_user_vote( $this->matchup_id, $bot_id, $this->data['favored'] ?: $this->data['prediction'], $spread_covered );
 				}
 			}
 		}

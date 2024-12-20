@@ -208,9 +208,16 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 
 	// If prediction.
 	if ( $prediction_short ) {
+		$visible = sprintf( "%s win", $prediction_short );
+		$favored = ! is_null( $data['favored'] ) ? $data['favored'] : null;
+
+		if ( $favored && $prediction && $favored !== $prediction ) {
+			$visible .= sprintf( ' (%s!)', __( 'Underdog', 'promatchups' ) );
+		}
+
 		$list['choice'] = [
 			'hidden'  => __( 'Members Only', 'promatchups' ),
-			'visible' => sprintf( "%s win", $prediction_short ),
+			'visible' => $visible,
 		];
 	}
 

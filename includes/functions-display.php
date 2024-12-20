@@ -202,8 +202,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	$prediction       = $data['prediction'];
 	$prediction_short = $data['prediction_short'] ?: $prediction;
 	$probability      = $data['probability'];
-	$probability      = $probability ? $probability . '%' : '';
-	$likelihood       = $data['likelihood'];
+	// $likelihood       = $data['likelihood'];
 	$spread_covered   = $data['spread_covered'];
 	// $predicted_score  = $data['predicted_score'] ? implode( '-', (array) $data['predicted_score'] ) : '';
 
@@ -215,31 +214,59 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 		];
 	}
 
+	// TODO: Get spread mode as well. -110 is the juice in this.
+	// Panthers won't cover -2.5, -110
+
+	// TODO: Show if underdog (not favored team) is predicted to win.
+
 	// If we have a spread covered value.
-	if ( ! is_null( $spread_covered ) && isset( $data['spreads'][ $prediction ]['spread_used'] ) ) {
-		$spread = $data['spreads'][ $prediction ]['spread_used'];
+	if ( ! is_null( $spread_covered ) ) {
+		// If we have a favored team the spread vote is for the favored team (new way).
+		// If no favored team, the spread vote is for the predicted winner (old way).
+		$team       = ! is_null( $data['favored'] ) ? $data['favored'] : $prediction;
+		$team_short = ! is_null( $data['favored_short'] ) ? $data['favored_short'] : $prediction_short;
+		$spread     = isset( $data['spreads'][ $team ]['spread_used'] ) ? $data['spreads'][ $team ]['spread_used'] : null;
 
 		// If spread.
 		if ( ! is_null( $spread ) ) {
+			// If spread covered.
 			if ( $spread_covered ) {
+				$visible = sprintf( '%s cover %s', $team_short, $spread );
+
+				if ( isset( $data['spreads'][ $team ]['spread_juice'] ) ) {
+					$visible .= sprintf( ' (%s)', $data['spreads'][ $team ]['spread_juice'] );
+				}
+
 				$list['spread'] = [
 					'hidden'  => __( 'Members Only', 'promatchups' ),
-					'visible' => sprintf( '%s cover %s', $prediction_short, $spread ),
+					'visible' => $visible,
 				];
-			} else {
+			}
+			// Not covered.
+			else {
+				$visible = sprintf( '%s won\'t cover %s', $team_short, $spread );
+
+				if ( isset( $data['spreads'][ $team ]['spread_juice'] ) ) {
+					$visible .= sprintf( ' (%s)', $data['spreads'][ $team ]['spread_juice'] );
+				}
+
 				$list['spread'] = [
 					'hidden'  => __( 'Members Only', 'promatchups' ),
-					'visible' => sprintf( '%s won\'t cover %s', $prediction_short, $spread ),
+					'visible' => $visible,
 				];
 			}
 		}
 	}
 
-	// If probability and likelihood.
-	if ( $probability && $likelihood ) {
+	// If probability.
+	if ( $probability ) {
+		// If spread covered, show the probably. If not covering, show the opposite.
+		$probability = $spread_covered ? $probability : 100 - $probability;
+		$probability = $probability ? $probability . '%' : '';
+
 		$list['probability'] = [
 			'hidden'  => __( 'Members Only', 'promatchups' ),
-			'visible' => sprintf( '%s, %s', $probability, ucfirst( strtolower( $likelihood ) ) ),
+			'visible' => sprintf( '%s %s', $probability, __( 'confidence', 'promatchups' ) ),
 		];
 	}
 

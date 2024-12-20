@@ -269,7 +269,7 @@ function pm_get_prediction_list( $data, $hidden = false ) {
 	// If probability.
 	if ( $probability ) {
 		// If spread covered, show the probably. If not covering, show the opposite.
-		$probability = $spread_covered ? $probability : 100 - $probability;
+		$probability = ! $spread_covered && $probability < 50 ? 100 - $probability : $probability;
 		$probability = $probability ? $probability . '%' : '';
 
 		$list['probability'] = [

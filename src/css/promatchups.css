@@ -309,6 +309,7 @@ body {
 .pm-prediction__item.choice::before,
 .pm-prediction__item.probability::before,
 .pm-prediction__item.spread::before {
+	flex: 0 0 auto;
 	width: 1.2em;
 	height: 1.2em;
 	background: currentColor;

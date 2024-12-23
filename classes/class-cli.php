@@ -396,105 +396,17 @@ class ProMatchups_CLI {
 
 				// Loop through posts.
 				while ( $query->have_posts() ) : $query->the_post();
-					/**
-					 * TODO: Update votes for these new bots.
-					 *
-					 *
-					 * Away Team Bot: Always votes for the away team to win H2H and cover the spread.
-					 * Home Team Bot: Always votes for the home team to win H2H and cover the spread.
-					 * Favored Bot: Always votes for the favored team to win H2H and cover the spread.
-					 * Underdog Bot: Always votes for the underdog team to win H2H and cover the spread.
-					 */
-					$bot_id         = pm_get_bot_user_id();
-					$awaybot_id     = pm_get_awaybot_user_id();
-					$homebot_id     = pm_get_homebot_user_id();
-					$favoredbot_id  = pm_get_favoredbot_user_id();
-					$underdogbot_id = pm_get_underdogbot_user_id();
-					$matchup_id     = get_the_ID();
-					$data           = pm_get_matchup_data( $matchup_id );
-					$team           = $data['prediction'];
-					$favored        = $data['favored'];
-					$probability    = $data['probability'];
-
-					// Start counts.
-					$comments = 0;
-					$skipped  = 0;
-
-					// If team, update main bot votes.
-					if ( $team ) {
-						$h2h_id = 0;
-						$ats_id = 0;
-
-						// Update vote.
-						$h2h_id = pm_update_user_vote( $matchup_id, $bot_id, $team );
-
-						// Get spread covered prediction.
-						$spread_covered = $data['spread_covered'];
-
-						// If we have a spread covered prediction.
-						if ( ! is_null( $spread_covered ) ) {
-							// Spread vote is on the favored team.
-							$team = $favored ?: $team;
-
-							// Update spread vote.
-							$ats_id = pm_update_user_vote( $matchup_id, $bot_id, $team, $spread_covered );
-						}
-
-						// If comment ID, add it.
-						if ( $h2h_id ) {
-							$comments++;
-						} else {
-							$skipped++;
-						}
-
-						// If comment ID, add it.
-						if ( $ats_id ) {
-							$comments++;
-						} else {
-							$skipped++;
-						}
-					}
-
-					// If favored team, update moneyline bot votes.
-					if ( $favored ) {
-						$h2h_id = 0;
-						$ats_id    = 0;
-
-						// Update vote.
-						$h2h_id = pm_update_user_vote( $matchup_id, $bot_id_s, $favored );
-
-						// // If we have a probability.
-						// if ( $probability ) {
-						// 	// If the probability is >= N%, the spread is covered.
-						// 	$favored_spread_covered = (int) $probability >= 65;
-
-						// 	// Add spread vote.
-						// 	$ats_id = pm_update_user_vote( $matchup_id, $bot_id_s, $favored, $favored_spread_covered );
-						// }
-
-						// If comment ID, add it.
-						if ( $h2h_id ) {
-							$comments++;
-						} else {
-							$skipped++;
-						}
-
-						// // If comment ID, add it.
-						// if ( $ats_id ) {
-						// 	$comments++;
-						// } else {
-						// 	$skipped++;
-						// }
-					}
+					$matchup_id = get_the_ID();
+					$bot_votes  = pm_update_bot_votes( $matchup_id );
 
 					// If comments.
-					if ( $comments ) {
-						WP_CLI::log( $comments . ' bot vote(s) updated for post ID: ' . $matchup_id . ' ' . get_permalink() );
+					if ( $bot_votes['votes'] ) {
+						WP_CLI::log( $bot_votes['votes'] . ' bot vote(s) updated for post ID: ' . $matchup_id . ' ' . get_permalink() );
 					}
 
 					// If skipped.
-					if ( $skipped ) {
-						WP_CLI::log( $skipped . ' bot vote(s) skipped for post ID: ' . $matchup_id . ' ' . get_permalink() );
+					if ( $bot_votes['skipped'] ) {
+						WP_CLI::log( $bot_votes['skipped'] . ' bot vote(s) skipped for post ID: ' . $matchup_id . ' ' . get_permalink() );
 					}
 
 				endwhile;

@@ -195,35 +195,11 @@ class ProMatchups_AskNews_Insight_Matchup_Listener extends ProMatchups_Listener 
 		}
 
 		/***************************************************************
-		 * Update the author/bot vote.
+		 * Update the bot votes.
 		 ***************************************************************/
 
-		// If we have a prediction, add the vote.
-		if ( $this->data['prediction'] ) {
-			// Get bot IDs.
-			$bot_id         = pm_get_bot_user_id();
-			$awaybot_id     = pm_get_awaybot_user_id();
-			$homebot_id     = pm_get_homebot_user_id();
-			$favoredbot_id  = pm_get_favoredbot_user_id();
-			$underdogbot_id = pm_get_underdogbot_user_id();
-
-			// If we have a valid user.
-			if ( get_user_by( 'id', $bot_id ) ) {
-				// Add author/bot vote.
-				pm_update_user_vote( $this->matchup_id, $bot_id, $this->data['prediction'] );
-
-				// Get spread covered.
-				$spread_covered = $this->data['spread_covered'];
-
-				// If we have a spread covered prediction.
-				if ( ! is_null( $spread_covered ) ) {
-					// Add author/bot vote for spread.
-					pm_update_user_vote( $this->matchup_id, $bot_id, $this->data['favored'] ?: $this->data['prediction'], $spread_covered );
-				}
-			}
-
-			// TODO: Update the bot votes for new bots. See class-cli.php for details.
-		}
+		// Update bot votes.
+		$bot_votes = pm_update_bot_votes( $matchup_id );
 
 		/***************************************************************
 		 * Update Matchup Tags.

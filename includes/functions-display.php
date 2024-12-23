@@ -374,9 +374,9 @@ function pm_get_odds_table( $data, $hidden = false ) {
 	$sites = [];
 
 	// Loop through odds data.
-	foreach ( $odds_data as $team => $data ) {
+	foreach ( $odds_data as $team => $values ) {
 		// Merge the sites.
-		$sites = array_merge( $sites, array_keys( $data['odds'] ) );
+		$sites = array_merge( $sites, array_keys( (array) $values['odds'] ) );
 	}
 
 	// Remove duplicates.

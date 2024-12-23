@@ -63,13 +63,22 @@ class ProMatchups_Datatable {
 		wp_enqueue_style( 'datatables-buttons', 'https://cdn.datatables.net/buttons/3.1.2/css/buttons.dataTables.min.css', [], '3.1.2' );
 		wp_enqueue_script( 'datatables-buttons', 'https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.min.js', [ 'datatables', 'jquery' ], '3.1.2', true );
 
-		//
-		$bot_id         = pm_get_bot_user_id();
-		$awaybot_id     = pm_get_awaybot_user_id();
-		$homebot_id     = pm_get_homebot_user_id();
-		$favoredbot_id  = pm_get_favoredbot_user_id();
-		$underdogbot_id = pm_get_underdogbot_user_id();
-		$user_id        = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : $bot_id;
+		// Get user data.
+		$bots    = [];
+		$bot_id  = pm_get_bot_user_id();
+		$user_id = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : $bot_id;
+		$bot_ids = array_filter([
+			$bot_id,
+			pm_get_awaybot_user_id(),
+			pm_get_homebot_user_id(),
+			pm_get_favoredbot_user_id(),
+			pm_get_underdogbot_user_id(),
+		]);
+
+		// Loop through bot ID's and get user display name.
+		foreach ( $bot_ids as $bot_id ) {
+			$bots[ $bot_id ] = get_user_by( 'ID', $bot_id )->display_name;
+		}
 
 		// Start the data array for DataTables.
 		$array = [];
@@ -183,6 +192,19 @@ class ProMatchups_Datatable {
 
 			// TODO: Add filter for different User ID's.
 			// TODO: Update url with query parameters so current filters are saved and can be shared.
+
+			// User/Bot filter.
+			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
+				$html .= '<div>';
+					$html .= '<label for="user-filter">User:</label>';
+					$html .= '<select style="min-height:48px;" id="user-filter">';
+						foreach ( $bots as $bot_id => $bot_name ) {
+							$selected  = $user_id === $bot_id ? ' selected' : '';
+							$html     .= sprintf( '<option value="%d"%s>%s</option>', $bot_id, $selected, $bot_name );
+						}
+					$html .= '</select>';
+				$html .= '</div>';
+			$html .= '</div>';
 
 			// Filters.
 			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
@@ -357,16 +379,16 @@ class ProMatchups_Datatable {
 					return confidence >= minConfidence;
 				});
 
-				// Event listeners for filters
-				$('#min-date, #max-date').on('change', function() {
-					updateURLParameter('min_date', $('#min-date').val());
-					updateURLParameter('max_date', $('#max-date').val());
-					table.draw();
+				$('#user-filter').on('change', function() {
+					var value = this.value;
+					var url   = updateURLParameter('user_id', value);
+					// Refresh the page with the new user ID
+					window.location.href = url;
 				});
 
-				$('#confidence-filter').on('keyup change', function() {
-					updateURLParameter('conf', this.value);
-					table.draw();
+				$('#global-search').on('keyup', function() {
+					updateURLParameter('s', this.value);
+					table.search(this.value).draw();
 				});
 
 				$('#league-filter').on('change', function() {
@@ -387,22 +409,35 @@ class ProMatchups_Datatable {
 					table.column(columnIndices.type).search(value).draw();
 				});
 
-				$('#global-search').on('keyup', function() {
-					updateURLParameter('s', this.value);
-					table.search(this.value).draw();
+				$('#confidence-filter').on('keyup change', function() {
+					updateURLParameter('conf', this.value);
+					table.draw();
 				});
 
+				// Event listeners for filters
+				$('#min-date, #max-date').on('change', function() {
+					updateURLParameter('min_date', $('#min-date').val());
+					updateURLParameter('max_date', $('#max-date').val());
+					table.draw();
+				});
+
+				// Update the URL with the new parameter value.
 				function updateURLParameter(param, value) {
 					const url = new URL(window.location.href);
+
 					if (value) {
 						url.searchParams.set(param, value);
 					} else {
-						url.searchParams.delete(param); // Remove the param if the value is empty
+						url.searchParams.delete(param); // Remove the param if the value is empty.
 					}
-					window.history.replaceState({}, '', url); // Update the URL without reloading
+
+					window.history.replaceState({}, '', url); // Update the URL without reloading.
+
+					// Return the url.
+					return url;
 				}
 
-				// Win percentage calculation
+				// Win percentage calculation.
 				function updateWinPercentage() {
 					var filteredData = table.rows({ filter: 'applied' }).data();
 					var totalRows = filteredData.length;

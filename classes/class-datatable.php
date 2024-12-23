@@ -194,16 +194,23 @@ class ProMatchups_Datatable {
 			// TODO: Add filter for different User ID's.
 			// TODO: Update url with query parameters so current filters are saved and can be shared.
 
-			// User/Bot filter.
-			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
-				$html .= '<div>';
-					$html .= '<label for="user-filter">Bot:</label>';
+
+
+			// Win percentage.
+			$html .= '<div id="win-percentage-section" class="has-md-padding has-lg-margin-bottom has-background has-alt-background-color" style="display:flex;justify-content:space-between;align-items:center;gap:.5em;">';
+				// User/Bot filter.
+				$html .= '<div style="display:flex;gap:.5em;align-items:center;">';
+					$html .= '<label class="has-no-margin-bottom" for="user-filter">Bot:</label>';
 					$html .= '<select style="min-height:48px;" id="user-filter">';
 						foreach ( $bots as $bot_id => $bot_name ) {
 							$selected  = $user_id === $bot_id ? ' selected' : '';
 							$html     .= sprintf( '<option value="%d"%s>%s</option>', $bot_id, $selected, $bot_name );
 						}
 					$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<div style="display:flex;gap:.5em;align-items:center;">';
+					$html .= '<label class="has-no-margin-bottom">Win Percentage:</label>';
+					$html .= '<span id="win-percentage">Calculating...</span>';
 				$html .= '</div>';
 			$html .= '</div>';
 
@@ -270,12 +277,6 @@ class ProMatchups_Datatable {
 					$html .= '</div>';
 				$html .= '</div>';
 			$html .= '</div>';
-
-			// Win percentage.
-			$html .= '<p id="win-percentage-section" class="has-background has-alt-background-color" style="display:flex;justify-content:center;gap:.25em;">';
-				$html .= '<label class="has-no-margin-bottom">Win Percentage:</label>';
-				$html .= '<span id="win-percentage">Calculating...</span>';
-			$html .= '</p>';
 
 			// Build table.
 			$html .= '<table id="vote-stats">';

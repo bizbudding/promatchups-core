@@ -689,7 +689,7 @@ function pm_update_bot_votes( $matchup_id ) {
 	$skipped  = 0;
 
 	// If team, update main bot votes.
-	if ( $team ) {
+	if ( $team && $bot_id && $bot_user = get_user_by( 'ID', $bot_id ) ) {
 		$h2h_id = 0;
 		$ats_id = 0;
 

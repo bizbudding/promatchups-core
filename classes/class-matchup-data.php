@@ -170,6 +170,7 @@ class ProMatchups_Matchup_Data {
 		$this->data['score_diff']   = ! is_null( $this->data['winner_score'] ) && ! is_null( $this->data['loser_score'] ) ? $this->data['winner_score'] - $this->data['loser_score'] : null;
 
 		// Conditionals.
+		$this->data['has_teams']    = $this->data['away_team'] && $this->data['home_team'];
 		$this->data['has_winner']   = $this->data['winner_team'] ? true : false;
 		$this->data['has_loser']    = $this->data['loser_team'] ? true : false;
 		$this->data['has_score']    = $this->data['winner_score'] && $this->data['loser_score'] ? true : false;

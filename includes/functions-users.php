@@ -21,6 +21,51 @@ function pm_get_bot_user_id() {
 }
 
 /**
+ * Get away team bot user ID.
+ *
+ * @since TBD
+ *
+ * @return int
+ */
+function pm_get_awaybot_user_id() {
+	return 64;
+}
+
+/**
+ * Get home team bot user ID.
+ *
+ * @since TBD
+ *
+ * @return int
+ */
+function pm_get_homebot_user_id() {
+	return 65;
+}
+
+/**
+ * Get favored team bot user ID.
+ *
+ * @since TBD
+ *
+ * @return int
+ */
+function pm_get_favoredbot_user_id() {
+	return 66;
+}
+
+/**
+ * Get underdog team bot user ID.
+ *
+ * @since TBD
+ *
+ * @return int
+ */
+function pm_get_underdogbot_user_id() {
+	return 67;
+}
+
+/**
+ * TODO: Remove.
  * Get spreadbot user ID.
  *
  * @since 0.13.0
@@ -32,6 +77,7 @@ function pm_get_spreadbot_user_id() {
 }
 
 /**
+ * TODO: Remove.
  * Get moneylinebot user ID.
  *
  * @since 0.13.0

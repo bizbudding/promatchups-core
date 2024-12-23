@@ -396,14 +396,25 @@ class ProMatchups_CLI {
 
 				// Loop through posts.
 				while ( $query->have_posts() ) : $query->the_post();
-					$matchup_id  = get_the_ID();
-					$bot_id      = pm_get_bot_user_id();
-					$bot_id_s    = pm_get_spreadbot_user_id();
-					// $bot_id_ml   = pm_get_moneylinebot_user_id();
-					$data        = pm_get_matchup_data( $matchup_id );
-					$team        = $data['prediction'];
-					$favored     = $data['favored'];
-					$probability = $data['probability'];
+					/**
+					 * TODO: Update votes for these new bots.
+					 *
+					 *
+					 * Away Team Bot: Always votes for the away team to win H2H and cover the spread.
+					 * Home Team Bot: Always votes for the home team to win H2H and cover the spread.
+					 * Favored Bot: Always votes for the favored team to win H2H and cover the spread.
+					 * Underdog Bot: Always votes for the underdog team to win H2H and cover the spread.
+					 */
+					$bot_id         = pm_get_bot_user_id();
+					$awaybot_id     = pm_get_awaybot_user_id();
+					$homebot_id     = pm_get_homebot_user_id();
+					$favoredbot_id  = pm_get_favoredbot_user_id();
+					$underdogbot_id = pm_get_underdogbot_user_id();
+					$matchup_id     = get_the_ID();
+					$data           = pm_get_matchup_data( $matchup_id );
+					$team           = $data['prediction'];
+					$favored        = $data['favored'];
+					$probability    = $data['probability'];
 
 					// Start counts.
 					$comments = 0;
@@ -411,11 +422,11 @@ class ProMatchups_CLI {
 
 					// If team, update main bot votes.
 					if ( $team ) {
-						$moneyline_id = 0;
-						$spread_id    = 0;
+						$h2h_id = 0;
+						$ats_id = 0;
 
 						// Update vote.
-						$moneyline_id = pm_update_user_vote( $matchup_id, $bot_id, $team );
+						$h2h_id = pm_update_user_vote( $matchup_id, $bot_id, $team );
 
 						// Get spread covered prediction.
 						$spread_covered = $data['spread_covered'];
@@ -426,18 +437,18 @@ class ProMatchups_CLI {
 							$team = $favored ?: $team;
 
 							// Update spread vote.
-							$spread_id = pm_update_user_vote( $matchup_id, $bot_id, $team, $spread_covered );
+							$ats_id = pm_update_user_vote( $matchup_id, $bot_id, $team, $spread_covered );
 						}
 
 						// If comment ID, add it.
-						if ( $moneyline_id ) {
+						if ( $h2h_id ) {
 							$comments++;
 						} else {
 							$skipped++;
 						}
 
 						// If comment ID, add it.
-						if ( $spread_id ) {
+						if ( $ats_id ) {
 							$comments++;
 						} else {
 							$skipped++;
@@ -446,11 +457,11 @@ class ProMatchups_CLI {
 
 					// If favored team, update moneyline bot votes.
 					if ( $favored ) {
-						$moneyline_id = 0;
-						$spread_id    = 0;
+						$h2h_id = 0;
+						$ats_id    = 0;
 
 						// Update vote.
-						$moneyline_id = pm_update_user_vote( $matchup_id, $bot_id_s, $favored );
+						$h2h_id = pm_update_user_vote( $matchup_id, $bot_id_s, $favored );
 
 						// // If we have a probability.
 						// if ( $probability ) {
@@ -458,18 +469,18 @@ class ProMatchups_CLI {
 						// 	$favored_spread_covered = (int) $probability >= 65;
 
 						// 	// Add spread vote.
-						// 	$spread_id = pm_update_user_vote( $matchup_id, $bot_id_s, $favored, $favored_spread_covered );
+						// 	$ats_id = pm_update_user_vote( $matchup_id, $bot_id_s, $favored, $favored_spread_covered );
 						// }
 
 						// If comment ID, add it.
-						if ( $moneyline_id ) {
+						if ( $h2h_id ) {
 							$comments++;
 						} else {
 							$skipped++;
 						}
 
 						// // If comment ID, add it.
-						// if ( $spread_id ) {
+						// if ( $ats_id ) {
 						// 	$comments++;
 						// } else {
 						// 	$skipped++;

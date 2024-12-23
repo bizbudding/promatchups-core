@@ -115,6 +115,8 @@ class ProMatchups_Insight_Data {
 	/**
 	 * Set the matchup dates.
 	 *
+	 * TODO: This is modified date, not event date.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @return string

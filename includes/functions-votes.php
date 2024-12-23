@@ -497,7 +497,7 @@ function pm_update_user_vote( $matchup_id, $user, $team, $spread_covered = null 
 		'comment_author'       => $user->user_login,
 		'comment_author_email' => $data['model_used'],
 		'comment_author_url'   => $user->user_url,
-		'comment_author_IP'    => $data['probability'],
+		'comment_author_IP'    => $user->ID === pm_get_bot_user_id() ? $data['probability'] : null,
 		'comment_date'         => $event_date, // Set only local time, WP will also save gmt.
 	];
 

@@ -208,10 +208,9 @@ class ProMatchups_Datatable {
 
 			// Filters.
 			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
-
 				// Search.
 				$html .= '<div style="flex:1;">';
-					$search = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : '';
+					$search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
 					$html  .= '<label for="global-search">Search:</label>';
 					$html  .= sprintf( '<input type="text" id="global-search" placeholder="Search all columns" value="%s">', $search );
 				$html .= '</div>';
@@ -387,7 +386,7 @@ class ProMatchups_Datatable {
 				});
 
 				$('#global-search').on('keyup', function() {
-					updateURLParameter('s', this.value);
+					updateURLParameter('search', this.value);
 					table.search(this.value).draw();
 				});
 

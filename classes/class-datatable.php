@@ -68,6 +68,7 @@ class ProMatchups_Datatable {
 		$bot_id  = pm_get_bot_user_id();
 		$user_id = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : $bot_id;
 		$bot_ids = array_filter([
+			get_current_user_id(),
 			$bot_id,
 			pm_get_awaybot_user_id(),
 			pm_get_homebot_user_id(),

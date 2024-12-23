@@ -662,3 +662,127 @@ function pm_get_spread_result( $vote, $cover, $data ) {
 		}
 	}
 }
+
+/**
+ * Update all the bot votes for a matchup.
+ *
+ * @since 0.8.0
+ *
+ * @param int $matchup_id
+ *
+ * @return array
+ */
+function pm_update_bot_votes( $matchup_id ) {
+	$bot_id         = pm_get_bot_user_id();
+	$awaybot_id     = pm_get_awaybot_user_id();
+	$homebot_id     = pm_get_homebot_user_id();
+	$favoredbot_id  = pm_get_favoredbot_user_id();
+	$underdogbot_id = pm_get_underdogbot_user_id();
+	$matchup_id     = get_the_ID();
+	$data           = pm_get_matchup_data( $matchup_id );
+	$team           = $data['prediction'];
+	$favored        = $data['favored'];
+	$probability    = $data['probability'];
+
+	// Start counts.
+	$votes = 0;
+	$skipped  = 0;
+
+	// If team, update main bot votes.
+	if ( $team ) {
+		$h2h_id = 0;
+		$ats_id = 0;
+
+		// Update vote.
+		$h2h_id = pm_update_user_vote( $matchup_id, $bot_id, $team );
+
+		// Get spread covered prediction.
+		$spread_covered = $data['spread_covered'];
+
+		// If we have a spread covered prediction.
+		if ( ! is_null( $spread_covered ) ) {
+			// Spread vote is on the favored team.
+			$team = $favored ?: $team;
+
+			// Update spread vote.
+			$ats_id = pm_update_user_vote( $matchup_id, $bot_id, $team, $spread_covered );
+		}
+
+		// If comment ID, add it.
+		if ( $h2h_id ) {
+			$votes++;
+		} else {
+			$skipped++;
+		}
+
+		// If comment ID, add it.
+		if ( $ats_id ) {
+			$votes++;
+		} else {
+			$skipped++;
+		}
+	}
+
+	// If away team, update away bot votes.
+	if ( $data['away_team'] && $awaybot_id && $awaybot_user = get_user_by( 'ID', $awaybot_id ) ) {
+		$away_id = pm_update_user_vote( $matchup_id, $awaybot_id, $data['away_team'] );
+
+		// If comment ID, add it.
+		if ( $away_id ) {
+			$votes++;
+		} else {
+			$skipped++;
+		}
+	}
+
+	// If home team, update home bot votes.
+	if ( $data['home_team'] && $homebot_id && $homebot_user = get_user_by( 'ID', $homebot_id ) ) {
+		$home_id = pm_update_user_vote( $matchup_id, $homebot_id, $data['home_team'] );
+
+		// If comment ID, add it.
+		if ( $home_id ) {
+			$votes++;
+		} else {
+			$skipped++;
+		}
+	}
+
+	// If favored team, update favored and underdog bot votes.
+	if ( $favored ) {
+		// If favored team, update favored bot votes.
+		if ( $favoredbot_id && $favoredbot_user = get_user_by( 'ID', $favoredbot_id ) ) {
+			$favored_id = pm_update_user_vote( $matchup_id, $favoredbot_id, $favored );
+
+			// If comment ID, add it.
+			if ( $favored_id ) {
+				$votes++;
+			} else {
+				$skipped++;
+			}
+		}
+
+		// If underdog team, update underdog bot votes.
+		if ( $underdogbot_id && $underdogbot_user = get_user_by( 'ID', $underdogbot_id ) ) {
+			// If we have teams to compare.
+			if ( $data['has_teams'] ) {
+				// Get team name from away_team or home_team based which one is not favored.
+				$underdog = $favored === $data['away_team'] ? $data['home_team'] : $data['away_team'];
+
+				// Update vote.
+				$underdog_id = pm_update_user_vote( $matchup_id, $underdogbot_id, $underdog );
+
+				// If comment ID, add it.
+				if ( $underdog_id ) {
+					$votes++;
+				} else {
+					$skipped++;
+				}
+			}
+		}
+	}
+
+	return [
+		'votes'   => $votes,
+		'skipped' => $skipped,
+	];
+}

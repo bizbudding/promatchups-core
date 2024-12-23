@@ -191,11 +191,6 @@ class ProMatchups_Datatable {
 			<?php
 			$html .= ob_get_clean();
 
-			// TODO: Add filter for different User ID's.
-			// TODO: Update url with query parameters so current filters are saved and can be shared.
-
-
-
 			// Win percentage.
 			$html .= '<div id="win-percentage-section" class="has-md-padding has-lg-margin-bottom has-background has-alt-background-color" style="display:flex;justify-content:space-between;align-items:center;gap:.5em;">';
 				// User/Bot filter.

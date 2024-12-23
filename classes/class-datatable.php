@@ -196,7 +196,7 @@ class ProMatchups_Datatable {
 			// User/Bot filter.
 			$html .= '<div style="display:flex;gap:1em;" class="has-lg-margin-bottom">';
 				$html .= '<div>';
-					$html .= '<label for="user-filter">User:</label>';
+					$html .= '<label for="user-filter">Bot:</label>';
 					$html .= '<select style="min-height:48px;" id="user-filter">';
 						foreach ( $bots as $bot_id => $bot_name ) {
 							$selected  = $user_id === $bot_id ? ' selected' : '';
